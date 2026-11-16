@@ -67,13 +67,6 @@ export async function POST(request: Request) {
       currency: "INR", payment_status: "unpaid",
     };
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !serviceKey) {
-      return NextResponse.json({ error: "Checkout is not connected yet. The store owner needs to add the Supabase project URL and service role key in the deployment environment." }, { status: 503 });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { error: insertError } = await supabase.from("orders").insert(order);
     if (insertError) {
       console.error("Order insert failed:", insertError.message);
