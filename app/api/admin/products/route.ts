@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     if (!id || !name || !audiences.includes(audience) || !type || !ranges.includes(range) || !Number.isInteger(price) || price < 1 || !sizes.length) {
       return NextResponse.json({ error: "Complete all product fields with a valid audience, range, price and at least one size." }, { status: 400 });
     }
-    const wholesalePrice = body.wholesale_price === "" || body.wholesale_price == null ? Math.round(price * 0.7) : Number(body.wholesale_price);
+    const wholesalePrice = Math.round(price * 0.7);
     const minQuantity = body.min_quantity === "" || body.min_quantity == null ? 25 : Number(body.min_quantity);
     if (!Number.isInteger(minQuantity) || minQuantity < 1 || minQuantity > 5000) return NextResponse.json({ error: "Minimum quantity must be between 1 and 5,000." }, { status: 400 });
     if (wholesalePrice !== null && (!Number.isInteger(wholesalePrice) || wholesalePrice < 1 || wholesalePrice > price)) return NextResponse.json({ error: "Wholesale price must be a positive amount no higher than retail price." }, { status: 400 });
