@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 
-type AdminProduct = Product & { image_url?: string | null; wholesale_price?: number | null; active?: boolean; created_at?: string };
+type AdminProduct = Product & { image_url?: string | null; wholesale_price?: number | null; min_quantity?: number | null; active?: boolean; created_at?: string };
 type AdminOrder = { id: string; order_number: string; order_type: string; status: string; customer_name: string; customer_phone: string; customer_email: string; delivery_address: string; delivery_city: string; delivery_state: string; delivery_postal_code: string; items: Array<{ product_name: string; size: string; quantity: number; line_total: number }>; subtotal_inr: number; created_at: string };
 
 const ranges = ["Essential", "Everyday", "Premium", "Luxury"];
@@ -22,7 +22,7 @@ export function AdminDashboard() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<AdminProduct | null>(null);
-  const [form, setForm] = useState({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
+  const [form, setForm] = useState({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", min_quantity: "25", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
 
   useEffect(() => { fetch("/api/admin/session").then(r => setSession(r.ok)).catch(() => setSession(false)); }, []);
 
@@ -60,12 +60,12 @@ export function AdminDashboard() {
   }
   function startEdit(product: AdminProduct) {
     setEditing(product);
-    setForm({ id: product.id, name: product.name, audience: product.audience, type: product.type, range: product.range, price: String(product.price), wholesale_price: product.wholesale_price ? String(product.wholesale_price) : "", sizes: product.sizes.join(", "), tone: product.tone, image_url: product.image_url || "" });
+    setForm({ id: product.id, name: product.name, audience: product.audience, type: product.type, range: product.range, price: String(product.price), wholesale_price: product.wholesale_price ? String(product.wholesale_price) : "", min_quantity: String(product.min_quantity || 25), sizes: product.sizes.join(", "), tone: product.tone, image_url: product.image_url || "" });
   }
   async function saveProduct(event: React.FormEvent) {
     event.preventDefault(); setError(""); setMessage("");
     try {
-      await api("/api/admin/products", { method: "POST", body: JSON.stringify({ ...form, price: Number(form.price), wholesale_price: form.wholesale_price ? Number(form.wholesale_price) : null, sizes: form.sizes.split(",").map(value => value.trim()).filter(Boolean) }) });
+      await api("/api/admin/products", { method: "POST", body: JSON.stringify({ ...form, price: Number(form.price), wholesale_price: form.wholesale_price ? Number(form.wholesale_price) : null, min_quantity: Number(form.min_quantity || 25), sizes: form.sizes.split(",").map(value => value.trim()).filter(Boolean) }) });
       setMessage("Product saved."); setEditing(null); startNewProduct(); await loadData();
     } catch (err) { setError(err instanceof Error ? err.message : "Could not save product."); }
   }
@@ -122,7 +122,7 @@ export function AdminDashboard() {
           <div className="admin-form-pair"><label>Audience<select value={form.audience} onChange={e => setForm({ ...form, audience: e.target.value })}>{audiences.map(v => <option key={v}>{v}</option>)}</select></label><label>Range<select value={form.range} onChange={e => setForm({ ...form, range: e.target.value })}>{ranges.map(v => <option key={v}>{v}</option>)}</select></label></div>
           <label>Product type<input required value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} placeholder="Boxers, Briefs, Bras…" /></label>
           <div className="admin-form-pair"><label>Retail price (INR)<input type="number" min="1" required value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></label><label>Colour / tone<input value={form.tone} onChange={e => setForm({ ...form, tone: e.target.value })} /></label></div>
-          <label>Wholesale price (INR, optional)<input type="number" min="1" max={form.price} value={form.wholesale_price} onChange={e => setForm({ ...form, wholesale_price: e.target.value })} placeholder="Leave blank for a negotiated quote" /></label>
+          <div className="admin-form-pair"><label>Wholesale price (INR)<input type="number" min="1" max={form.price} value={form.wholesale_price} onChange={e => setForm({ ...form, wholesale_price: e.target.value })} placeholder="Auto: 30% below retail" /></label><label>Wholesale minimum quantity<input type="number" min="1" max="5000" required value={form.min_quantity} onChange={e => setForm({ ...form, min_quantity: e.target.value })} /></label></div>
           <label>Sizes (comma separated)<input required value={form.sizes} onChange={e => setForm({ ...form, sizes: e.target.value })} /></label>
           <label>Image URL (optional)<input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://…" /></label>
           <button className="admin-primary">{editing ? "SAVE CHANGES" : "ADD PRODUCT"}</button>
