@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { products as previewProducts, type Product } from "@/data/products";
-type CatalogMode = "retail" | "wholesale";\ntype CatalogProduct = Product & { wholesale_price?: number | null };
+type CatalogMode = "retail" | "wholesale";
+type CatalogProduct = Product & { wholesale_price?: number | null };
 
 type CartItem = { productId: string; size: string; quantity: number };
 const audienceNames = ["All", "Men", "Women", "Boy", "Girl"];
@@ -61,7 +62,8 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
     return list;
   }, [audience, type, size, range, sort]);
 
-  const displayPrice = (product: CatalogProduct) => mode === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price;\n  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const displayPrice = (product: CatalogProduct) => mode === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price;
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
     return sum + (product ? displayPrice(product) : 0) * item.quantity;
