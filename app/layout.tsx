@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { IntroScreen } from "@/components/intro-screen";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
@@ -28,7 +27,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body>
-        <IntroScreen />
         <header className="site-header">
           <a className="header-wordmark" href="/" aria-label="NIVORA Essentials home">
             NI<span className="wordmark-v">V</span>ORA<span className="header-essentials">ESSENTIALS</span>
