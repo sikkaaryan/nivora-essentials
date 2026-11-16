@@ -30,7 +30,6 @@ export function CheckoutForm() {
     } catch { setCart([]); }
   }, []);
 
-  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = useMemo(() => cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
     return sum + (product ? (orderType === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price) : 0) * item.quantity;
