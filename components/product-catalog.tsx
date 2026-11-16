@@ -9,7 +9,7 @@ type CartItem = { productId: string; size: string; quantity: number };
 const audienceNames = ["All", "Men", "Women", "Boy", "Girl"];
 const allSizes = ["XS", "S", "M", "L", "XL", "XXL", "2-3Y", "4-5Y", "6-7Y", "8-9Y", "10-11Y"];
 const rangeNames = ["All", "Essential", "Everyday", "Premium", "Luxury"];
-const CART_KEY = "nivora-cart-v1";
+const cartKeyFor = (mode: CatalogMode) => `nivora-cart-v1-${mode}`;
 
 function ProductArtwork({ product }: { product: Product }) {
   const imageIndex = previewProducts.findIndex(item => item.id === product.id);
@@ -22,6 +22,7 @@ function ProductArtwork({ product }: { product: Product }) {
 }
 
 export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
+  const cartKey = cartKeyFor(mode);
   const [products, setProducts] = useState<CatalogProduct[]>(previewProducts);
   const [audience, setAudience] = useState("All");
   const [type, setType] = useState("All");
@@ -44,15 +45,15 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(CART_KEY);
+      const saved = localStorage.getItem(cartKey);
       if (saved) setCart(JSON.parse(saved) as CartItem[]);
     } catch { /* Ignore invalid local cart data. */ }
     setReady(true);
-  }, []);
+  }, [cartKey]);
 
   useEffect(() => {
-    if (ready) localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  }, [cart, ready]);
+    if (ready) localStorage.setItem(cartKey, JSON.stringify(cart));
+  }, [cart, ready, cartKey]);
 
   const types = useMemo(() => ["All", ...Array.from(new Set(products.filter(p => audience === "All" || p.audience === audience).map(p => p.type)))], [audience, products]);
   const filtered = useMemo(() => {
