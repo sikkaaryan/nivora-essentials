@@ -12,7 +12,6 @@ type OrderBody = {
   orderType?: "retail" | "wholesale"; items?: SubmittedItem[];
 };
 
-const WHOLESALE_MINIMUM_UNITS = 10;
 const clean = (value: unknown, max = 500) => typeof value === "string" ? value.trim().slice(0, max) : "";
 
 export async function POST(request: Request) {
@@ -39,25 +38,22 @@ export async function POST(request: Request) {
     if (!supabaseUrl || !serviceKey) return NextResponse.json({ error: "Checkout is not connected yet. The store owner needs to configure Supabase in the deployment environment." }, { status: 503 });
     const supabase = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const productIds = [...new Set(items.map(item => item.productId))];
-    const { data: liveProducts, error: productError } = await supabase.from("products").select("id,name,audience,price,wholesale_price,sizes,active").in("id", productIds).eq("active", true);
+    const { data: liveProducts, error: productError } = await supabase.from("products").select("id,name,audience,price,wholesale_price,min_quantity,sizes,active").in("id", productIds).eq("active", true);
     if (productError || !liveProducts) return NextResponse.json({ error: "We couldn't verify the current catalogue. Please try again shortly." }, { status: 502 });
     const validatedItems = [];
     let totalUnits = 0;
     for (const item of items) {
       const product = liveProducts.find(candidate => candidate.id === item.productId);
       const quantity = Number(item.quantity);
-      if (!product || !product.sizes.includes(item.size) || !Number.isInteger(quantity) || quantity < 1 || quantity > 50) {
+      if (!product || !product.sizes.includes(item.size) || !Number.isInteger(quantity) || quantity < 1 || quantity > 500 || (orderType === "wholesale" && quantity < Number(product.min_quantity || 25))) {
         return NextResponse.json({ error: "One or more cart items are invalid. Please refresh your bag and try again." }, { status: 400 });
       }
       totalUnits += quantity;
-      validatedItems.push({ product_id: product.id, product_name: product.name, audience: product.audience, size: item.size, quantity, unit_price: orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price, line_total: (orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) * quantity });
-    }
-    if (orderType === "wholesale" && totalUnits < WHOLESALE_MINIMUM_UNITS) {
-      return NextResponse.json({ error: `Wholesale orders require at least ${WHOLESALE_MINIMUM_UNITS} units.` }, { status: 400 });
+      validatedItems.push({ product_id: product.id, product_name: product.name, audience: product.audience, size: item.size, quantity, unit_price: orderType === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price, line_total: (orderType === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price) * quantity, min_quantity: Number(product.min_quantity || 25) });
     }
 
     const subtotal = validatedItems.reduce((sum, item) => sum + item.line_total, 0);
-    const orderNumber = `NIV-${new Date().getFullYear()}-${randomUUID().slice(0, 8).toUpperCase()}`;
+    const orderNumber = `NIV-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${randomUUID().replaceAll("-","").slice(0,10).toUpperCase()}`;
     const order = {
       order_number: orderNumber, order_type: orderType, status: "pending_confirmation",
       customer_name: name, customer_phone: phone, customer_email: email,
@@ -79,10 +75,11 @@ export async function POST(request: Request) {
     if (resendKey && notifyEmail) {
       const itemLines = validatedItems.map(item => `• ${item.product_name} / ${item.size} × ${item.quantity} — ₹${item.line_total.toLocaleString("en-IN")}`).join("\n");
       const emailText = [
-        `New NIVORA ${orderType} order: ${orderNumber}`,
-        `Customer: ${name}`, `Phone: ${phone}`, `Email: ${email}`,
+        `NEW NIVORA ${orderType.toUpperCase()} ORDER: ${orderNumber}`,
+        `Order reference: ${orderNumber}`, `Order type: ${orderType}`,
+        `Customer name: ${name}`, `Customer email: ${email}`, `Customer phone: ${phone}`,
         `Business: ${order.business_name ?? "—"}`, `GSTIN: ${order.gstin ?? "—"}`,
-        `Address: ${address}, ${city}, ${state} - ${postalCode}`,
+        `Delivery address: ${address}, ${city}, ${state} - ${postalCode}`,
         "", "Items:", itemLines, "", `Estimated subtotal: ₹${subtotal.toLocaleString("en-IN")}`,
         `Notes: ${order.customer_notes ?? "—"}`, "Payment: Pay later — confirmation required.",
       ].join("\n");
