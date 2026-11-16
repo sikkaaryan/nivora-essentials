@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { products } from "@/data/products";
+type StoreProduct = { id: string; name: string; price: number; sizes: string[] };
 
 type CartItem = { productId: string; size: string; quantity: number };
 type OrderType = "retail" | "wholesale";
@@ -10,7 +10,7 @@ const CART_KEY = "nivora-cart-v1";
 const WHOLESALE_MINIMUM_UNITS = 10;
 
 export function CheckoutForm() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);\n  const [products, setProducts] = useState<StoreProduct[]>([]);
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
