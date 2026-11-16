@@ -8,16 +8,10 @@ const allSizes = ["XS","S","M","L","XL","XXL","2-3Y","4-5Y","6-7Y","8-9Y","10-11
 const rangeNames = ["All","Essential","Everyday","Premium"];
 
 function ProductArtwork({ product }: { product: Product }) {
-  const audience = product.audience.toLowerCase();
+  const artwork = product.audience === "Men" ? "/products/men.svg" : product.audience === "Women" ? "/products/women.svg" : product.audience === "Boy" ? "/products/boy.svg" : "/products/girl.svg";
   return (
-    <div className={`product-art product-art-${audience}`}>
-      <div className="art-orbit" />
-      <div className="art-kicker">NIVORA / EVERYDAY</div>
-      <div className="garment-shape" aria-hidden="true">
-        <span /><i /><b />
-      </div>
-      <div className="art-tone">{product.tone.toUpperCase()}</div>
-      <div className="art-number">{product.id.slice(0,2).toUpperCase()}</div>
+    <div className="product-art">
+      <img src={artwork} alt={`${product.audience} ${product.type} collection artwork`} />
     </div>
   );
 }
