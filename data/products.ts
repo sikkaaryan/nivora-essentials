@@ -2,12 +2,13 @@ export type Audience = "Men" | "Women" | "Boy" | "Girl";
 export type ProductRange = "Essential" | "Everyday" | "Premium" | "Luxury";
 export type Product = {
   id: string; name: string; audience: Audience; type: string; range: ProductRange;
-  price: number; sizes: string[]; tone: string;
+  price: number; sizes: string[]; tone: string; imageIndex: number;
 };
 
 export const products: Product[] = [
   {
     "id": "m-boxer-classic",
+    "imageIndex": 0,
     "name": "Classic Cotton Boxer",
     "audience": "Men",
     "type": "Boxers",
@@ -24,6 +25,7 @@ export const products: Product[] = [
   },
   {
     "id": "m-trunk-flex",
+    "imageIndex": 1,
     "name": "Flex Fit Trunks",
     "audience": "Men",
     "type": "Trunks",
@@ -39,6 +41,7 @@ export const products: Product[] = [
   },
   {
     "id": "m-brief-core",
+    "imageIndex": 2,
     "name": "Core Cotton Briefs",
     "audience": "Men",
     "type": "Briefs",
@@ -55,6 +58,7 @@ export const products: Product[] = [
   },
   {
     "id": "m-vest-rib",
+    "imageIndex": 3,
     "name": "Ribbed Everyday Vest",
     "audience": "Men",
     "type": "Vests",
@@ -70,6 +74,7 @@ export const products: Product[] = [
   },
   {
     "id": "m-tee-soft",
+    "imageIndex": 4,
     "name": "Soft Touch Crew Tee",
     "audience": "Men",
     "type": "T-shirts",
@@ -86,6 +91,7 @@ export const products: Product[] = [
   },
   {
     "id": "w-bra-seamless",
+    "imageIndex": 5,
     "name": "Seamless Comfort Bra",
     "audience": "Women",
     "type": "Bras",
@@ -101,6 +107,7 @@ export const products: Product[] = [
   },
   {
     "id": "w-panty-cotton",
+    "imageIndex": 6,
     "name": "Cotton Everyday Brief",
     "audience": "Women",
     "type": "Briefs",
@@ -117,6 +124,7 @@ export const products: Product[] = [
   },
   {
     "id": "w-cami-layer",
+    "imageIndex": 7,
     "name": "Soft Layer Camisole",
     "audience": "Women",
     "type": "Camisoles",
@@ -132,6 +140,7 @@ export const products: Product[] = [
   },
   {
     "id": "w-boyshort",
+    "imageIndex": 8,
     "name": "Smooth Fit Boyshort",
     "audience": "Women",
     "type": "Boyshorts",
@@ -148,6 +157,7 @@ export const products: Product[] = [
   },
   {
     "id": "w-lounge-set",
+    "imageIndex": 9,
     "name": "Relaxed Lounge Set",
     "audience": "Women",
     "type": "Lounge sets",
@@ -163,6 +173,7 @@ export const products: Product[] = [
   },
   {
     "id": "b-trunk-play",
+    "imageIndex": 10,
     "name": "Playday Cotton Trunks",
     "audience": "Boy",
     "type": "Trunks",
@@ -179,6 +190,7 @@ export const products: Product[] = [
   },
   {
     "id": "b-brief-core",
+    "imageIndex": 11,
     "name": "Little Core Briefs",
     "audience": "Boy",
     "type": "Briefs",
@@ -194,6 +206,7 @@ export const products: Product[] = [
   },
   {
     "id": "b-vest-soft",
+    "imageIndex": 12,
     "name": "Soft Cotton Vest",
     "audience": "Boy",
     "type": "Vests",
@@ -210,6 +223,7 @@ export const products: Product[] = [
   },
   {
     "id": "b-tee-weekend",
+    "imageIndex": 13,
     "name": "Weekend Crew Tee",
     "audience": "Boy",
     "type": "T-shirts",
@@ -225,6 +239,7 @@ export const products: Product[] = [
   },
   {
     "id": "b-set-active",
+    "imageIndex": 14,
     "name": "Active Day Set",
     "audience": "Boy",
     "type": "Sets",
@@ -240,6 +255,7 @@ export const products: Product[] = [
   },
   {
     "id": "g-brief-cotton",
+    "imageIndex": 15,
     "name": "Cotton Comfort Briefs",
     "audience": "Girl",
     "type": "Briefs",
@@ -256,6 +272,7 @@ export const products: Product[] = [
   },
   {
     "id": "g-cami-soft",
+    "imageIndex": 16,
     "name": "Soft Cotton Camisole",
     "audience": "Girl",
     "type": "Camisoles",
@@ -271,6 +288,7 @@ export const products: Product[] = [
   },
   {
     "id": "g-shortie",
+    "imageIndex": 17,
     "name": "Everyday Shorties",
     "audience": "Girl",
     "type": "Shorties",
@@ -286,6 +304,7 @@ export const products: Product[] = [
   },
   {
     "id": "g-tee-play",
+    "imageIndex": 18,
     "name": "Playful Essential Tee",
     "audience": "Girl",
     "type": "T-shirts",
@@ -301,6 +320,7 @@ export const products: Product[] = [
   },
   {
     "id": "g-set-comfy",
+    "imageIndex": 19,
     "name": "Comfy Day Set",
     "audience": "Girl",
     "type": "Sets",
