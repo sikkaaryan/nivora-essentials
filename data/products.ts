@@ -1,5 +1,5 @@
 export type Audience = "Men" | "Women" | "Boy" | "Girl";
-export type ProductRange = "Essential" | "Everyday" | "Premium";
+export type ProductRange = "Essential" | "Everyday" | "Premium" | "Luxury";
 export type Product = {
   id: string; name: string; audience: Audience; type: string; range: ProductRange;
   price: number; sizes: string[]; tone: string;
@@ -12,7 +12,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Boxers",
     "range": "Everyday",
-    "price": 4499,
+    "price": 1199,
     "sizes": [
       "S",
       "M",
@@ -28,7 +28,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Trunks",
     "range": "Premium",
-    "price": 6499,
+    "price": 2199,
     "sizes": [
       "S",
       "M",
@@ -43,7 +43,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Briefs",
     "range": "Essential",
-    "price": 3299,
+    "price": 799,
     "sizes": [
       "S",
       "M",
@@ -58,8 +58,8 @@ export const products: Product[] = [
     "name": "Ribbed Everyday Vest",
     "audience": "Men",
     "type": "Vests",
-    "range": "Everyday",
-    "price": 3999,
+    "range": "Essential",
+    "price": 999,
     "sizes": [
       "M",
       "L",
@@ -73,8 +73,8 @@ export const products: Product[] = [
     "name": "Soft Touch Crew Tee",
     "audience": "Men",
     "type": "T-shirts",
-    "range": "Premium",
-    "price": 5999,
+    "range": "Luxury",
+    "price": 3499,
     "sizes": [
       "S",
       "M",
@@ -89,8 +89,8 @@ export const products: Product[] = [
     "name": "Seamless Comfort Bra",
     "audience": "Women",
     "type": "Bras",
-    "range": "Premium",
-    "price": 6499,
+    "range": "Luxury",
+    "price": 3999,
     "sizes": [
       "S",
       "M",
@@ -105,7 +105,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Briefs",
     "range": "Essential",
-    "price": 3299,
+    "price": 699,
     "sizes": [
       "XS",
       "S",
@@ -121,7 +121,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Camisoles",
     "range": "Everyday",
-    "price": 4299,
+    "price": 1299,
     "sizes": [
       "S",
       "M",
@@ -136,7 +136,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Boyshorts",
     "range": "Everyday",
-    "price": 3799,
+    "price": 999,
     "sizes": [
       "XS",
       "S",
@@ -151,8 +151,8 @@ export const products: Product[] = [
     "name": "Relaxed Lounge Set",
     "audience": "Women",
     "type": "Lounge sets",
-    "range": "Premium",
-    "price": 8999,
+    "range": "Luxury",
+    "price": 4999,
     "sizes": [
       "S",
       "M",
@@ -167,7 +167,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Trunks",
     "range": "Everyday",
-    "price": 3499,
+    "price": 899,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -183,7 +183,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Briefs",
     "range": "Essential",
-    "price": 3099,
+    "price": 599,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -198,7 +198,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Vests",
     "range": "Essential",
-    "price": 3299,
+    "price": 799,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -213,8 +213,8 @@ export const products: Product[] = [
     "name": "Weekend Crew Tee",
     "audience": "Boy",
     "type": "T-shirts",
-    "range": "Everyday",
-    "price": 3999,
+    "range": "Premium",
+    "price": 1699,
     "sizes": [
       "4-5Y",
       "6-7Y",
@@ -229,7 +229,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Sets",
     "range": "Premium",
-    "price": 5499,
+    "price": 1999,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -244,7 +244,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Briefs",
     "range": "Essential",
-    "price": 3099,
+    "price": 599,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -260,7 +260,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Camisoles",
     "range": "Everyday",
-    "price": 3799,
+    "price": 899,
     "sizes": [
       "4-5Y",
       "6-7Y",
@@ -275,7 +275,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Shorties",
     "range": "Everyday",
-    "price": 3499,
+    "price": 799,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -290,7 +290,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "T-shirts",
     "range": "Premium",
-    "price": 4499,
+    "price": 1599,
     "sizes": [
       "4-5Y",
       "6-7Y",
@@ -304,8 +304,8 @@ export const products: Product[] = [
     "name": "Comfy Day Set",
     "audience": "Girl",
     "type": "Sets",
-    "range": "Premium",
-    "price": 5999,
+    "range": "Luxury",
+    "price": 2999,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -317,4 +317,4 @@ export const products: Product[] = [
 ];
 
 export const audienceOptions = ["All","Men","Women","Boy","Girl"] as const;
-export const rangeOptions = ["All","Essential","Everyday","Premium"] as const;
+export const rangeOptions = ["All","Essential","Everyday","Premium","Luxury"] as const;
