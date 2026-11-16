@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 const COOKIE = "nivora_admin_session";
-function validSession(request: Request) {
+export function isAdminSessionValid(request: Request) {
  const token=request.headers.get("cookie")?.split(";").map(v=>v.trim()).find(v=>v.startsWith(COOKIE+"="))?.slice(COOKIE.length+1)||"";
  const [expires,signature]=token.split("."); const secret=process.env.ADMIN_SESSION_SECRET||"";
  if(!secret||!expires||!signature||Number(expires)<Date.now()) return false;
@@ -10,7 +10,7 @@ function validSession(request: Request) {
  return a.length===b.length&&timingSafeEqual(a,b);
 }
 export async function requireAdmin(request: Request) {
- if(!validSession(request)) return {error:NextResponse.json({error:"Admin sign-in required."},{status:401})};
+ if(!isAdminSessionValid(request)) return {error:NextResponse.json({error:"Admin sign-in required."},{status:401})};
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL, key=process.env.SUPABASE_SERVICE_ROLE_KEY;
  if(!url||!key) return {error:NextResponse.json({error:"Admin database connection is not configured."},{status:503})};
  return {admin:createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}})};
