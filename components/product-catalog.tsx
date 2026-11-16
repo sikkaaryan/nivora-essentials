@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { products as previewProducts, type Product } from "@/data/products";
+import { products as previewProducts } from "@/data/products";
 type CatalogMode = "retail" | "wholesale";
 type CatalogProduct = Product & { wholesale_price?: number | null; min_quantity?: number | null };
 
