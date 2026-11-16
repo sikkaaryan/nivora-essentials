@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { products as previewProducts, type Product } from "@/data/products";
 type CatalogMode = "retail" | "wholesale";
-type CatalogProduct = Product & { wholesale_price?: number | null };
+type CatalogProduct = Product & { wholesale_price?: number | null; min_quantity?: number | null };
 
 type CartItem = { productId: string; size: string; quantity: number };
 const audienceNames = ["All", "Men", "Women", "Boy", "Girl"];
@@ -67,7 +67,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
     return list;
   }, [audience, type, size, range, sort, products]);
 
-  const displayPrice = (product: CatalogProduct) => mode === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price;
+  const displayPrice = (product: CatalogProduct) => mode === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price;
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
@@ -78,7 +78,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
   function openProduct(product: Product) {
     setSelectedProduct(product);
     setSelectedSize(product.sizes[0] ?? "");
-    setQuantity(1);
+    setQuantity(mode === "wholesale" ? Number((product as CatalogProduct).min_quantity || 25) : 1);
     setNotice("");
   }
   function addToCart() {
@@ -131,7 +131,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
           </article>)}</div> : <div className="empty-results">No styles match these filters. Try another size or range.</div>}
         </div>
       </div>
-      <p className="catalog-disclaimer">{mode === "wholesale" ? "Trade prices are shown where configured; otherwise the listed retail amount is indicative only. Our team confirms wholesale rates, minimum quantities and stock after your enquiry." : "Collection preview · Product artwork, styles and INR prices are provisional and can be updated before launch."}</p>
+      <p className="catalog-disclaimer">{mode === "wholesale" ? "Wholesale prices are 30% below retail. Each style has its own minimum order quantity, shown on the product details." : "Collection preview · Product artwork, styles and INR prices are provisional and can be updated before launch."}</p>
 
       {selectedProduct && <div className="store-overlay" role="presentation" onMouseDown={e => { if (e.target === e.currentTarget) setSelectedProduct(null); }}>
         <section className="product-dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title">
@@ -144,8 +144,8 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
             <p className="dialog-description">{selectedProduct.type} · {selectedProduct.tone} · Thoughtfully considered everyday comfort.</p>
             <label className="choice-label">SELECT SIZE</label>
             <div className="size-choices">{selectedProduct.sizes.map(s => <button key={s} className={selectedSize === s ? "selected" : ""} onClick={() => setSelectedSize(s)}>{s}</button>)}</div>
-            <span className="choice-label">QUANTITY</span>
-            <div className="quantity-control"><button onClick={() => setQuantity(q => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button><span>{quantity}</span><button onClick={() => setQuantity(q => Math.min(10, q + 1))} aria-label="Increase quantity">+</button></div>
+            <span className="choice-label">QUANTITY {mode === "wholesale" ? `(MIN ${Number((selectedProduct as CatalogProduct).min_quantity || 25)})` : ""}</span>
+            <div className="quantity-control"><button onClick={() => setQuantity(q => Math.max(mode === "wholesale" ? Number((selectedProduct as CatalogProduct).min_quantity || 25) : 1, q - 1))} aria-label="Decrease quantity">−</button><span>{quantity}</span><button onClick={() => setQuantity(q => Math.min(500, q + 1))} aria-label="Increase quantity">+</button></div>
             <button className="add-to-bag" onClick={addToCart}>ADD TO BAG — ₹{(displayPrice(selectedProduct) * quantity).toLocaleString("en-IN")}</button>
             <p className="provisional-note">Preview product · Final images, fabric details and stock confirmation will be added before launch.</p>
           </div>
@@ -161,7 +161,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
               if (!product) return null;
               return <div className="cart-item" key={`${item.productId}-${item.size}`}>
                 <div className="cart-item-art"><ProductArtwork product={product} /></div>
-                <div className="cart-item-info"><strong>{product.name}</strong><span>Size {item.size} · ₹{displayPrice(product).toLocaleString("en-IN")}</span><div className="cart-item-actions"><button onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}>+</button><button className="remove-item" onClick={() => updateQuantity(item.productId, item.size, 0)}>Remove</button></div></div>
+                <div className="cart-item-info"><strong>{product.name}</strong><span>Size {item.size} · ₹{displayPrice(product).toLocaleString("en-IN")}</span><div className="cart-item-actions"><button onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1 < (mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1) ? (mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1) : item.quantity - 1)}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.productId, item.size, Math.min(500, item.quantity + 1)}>+</button><button className="remove-item" onClick={() => updateQuantity(item.productId, item.size, 0)}>Remove</button></div></div>
                 <strong>₹{(displayPrice(product) * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
