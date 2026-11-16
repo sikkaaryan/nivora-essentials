@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Product } from "@/data/products";
 
-type AdminProduct = Product & { image_url?: string | null; active?: boolean; created_at?: string };
+type AdminProduct = Product & { image_url?: string | null; wholesale_price?: number | null; active?: boolean; created_at?: string };
 type AdminOrder = { id: string; order_number: string; order_type: string; status: string; customer_name: string; customer_phone: string; customer_email: string; delivery_address: string; delivery_city: string; delivery_state: string; delivery_postal_code: string; items: Array<{ product_name: string; size: string; quantity: number; line_total: number }>; subtotal_inr: number; created_at: string };
 
 const ranges = ["Essential", "Everyday", "Premium", "Luxury"];
@@ -22,7 +22,7 @@ export function AdminDashboard() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<AdminProduct | null>(null);
-  const [form, setForm] = useState({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
+  const [form, setForm] = useState({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
 
   useEffect(() => { fetch("/api/admin/session").then(r => setSession(r.ok)).catch(() => setSession(false)); }, []);
 
@@ -60,12 +60,12 @@ export function AdminDashboard() {
   }
   function startEdit(product: AdminProduct) {
     setEditing(product);
-    setForm({ id: product.id, name: product.name, audience: product.audience, type: product.type, range: product.range, price: String(product.price), sizes: product.sizes.join(", "), tone: product.tone, image_url: product.image_url || "" });
+    setForm({ id: product.id, name: product.name, audience: product.audience, type: product.type, range: product.range, price: String(product.price), wholesale_price: product.wholesale_price ? String(product.wholesale_price) : "", sizes: product.sizes.join(", "), tone: product.tone, image_url: product.image_url || "" });
   }
   async function saveProduct(event: React.FormEvent) {
     event.preventDefault(); setError(""); setMessage("");
     try {
-      await api("/api/admin/products", { method: "POST", body: JSON.stringify({ ...form, price: Number(form.price), sizes: form.sizes.split(",").map(value => value.trim()).filter(Boolean) }) });
+      await api("/api/admin/products", { method: "POST", body: JSON.stringify({ ...form, price: Number(form.price), wholesale_price: form.wholesale_price ? Number(form.wholesale_price) : null, sizes: form.sizes.split(",").map(value => value.trim()).filter(Boolean) }) });
       setMessage("Product saved."); setEditing(null); startNewProduct(); await loadData();
     } catch (err) { setError(err instanceof Error ? err.message : "Could not save product."); }
   }
