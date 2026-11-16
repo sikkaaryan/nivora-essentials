@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createClient, type Session } from "@supabase/supabase-js";
 import type { Product } from "@/data/products";
 
 type AdminProduct = Product & { image_url?: string | null; active?: boolean; created_at?: string };
@@ -10,14 +9,11 @@ type AdminOrder = { id: string; order_number: string; order_type: string; status
 const ranges = ["Essential", "Everyday", "Premium", "Luxury"];
 const audiences = ["Men", "Women", "Boy", "Girl"];
 const statuses = ["pending_confirmation", "confirmed", "processing", "shipped", "delivered", "cancelled"];
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-const supabase = supabaseUrl && supabaseAnon ? createClient(supabaseUrl, supabaseAnon) : null;
 const money = (value: number) => `₹${Number(value || 0).toLocaleString("en-IN")}`;
 
 export function AdminDashboard() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [email, setEmail] = useState("");
+  const [session, setSession] = useState(false);
+  const [adminId, setAdminId] = useState("");
   const [password, setPassword] = useState("");
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [orders, setOrders] = useState<AdminOrder[]>([]);
@@ -28,16 +24,10 @@ export function AdminDashboard() {
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const [form, setForm] = useState({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
 
-  useEffect(() => {
-    if (!supabase) return;
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
-    return () => listener.subscription.unsubscribe();
-  }, []);
+  useEffect(() => { fetch("/api/admin/session").then(r => setSession(r.ok)).catch(() => setSession(false)); }, []);
 
   async function api(path: string, options: RequestInit = {}) {
-    if (!session?.access_token) throw new Error("Please sign in again.");
-    const response = await fetch(path, { ...options, headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}`, ...options.headers } });
+    const response = await fetch(path, { ...options, credentials: "same-origin", headers: { "Content-Type": "application/json", ...options.headers } });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Request failed.");
     return result;
@@ -57,15 +47,12 @@ export function AdminDashboard() {
   useEffect(() => { if (session) void loadData(); }, [session]);
 
   async function signIn(event: React.FormEvent) {
-    event.preventDefault(); setError("");
-    if (!supabase) { setError("Add the Supabase URL and anon key to the deployment environment first."); return; }
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
-    setLoading(false);
+    event.preventDefault(); setError(""); setLoading(true);
+    try { const response = await fetch("/api/admin/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: adminId, password }), credentials: "same-origin" }); const result = await response.json(); if (!response.ok) throw new Error(result.error || "Sign in failed."); setSession(true); }
+    catch (err) { setError(err instanceof Error ? err.message : "Sign in failed."); }
+    finally { setLoading(false); }
   }
-
-  async function signOut() { await supabase?.auth.signOut(); setSession(null); setProducts([]); setOrders([]); }
+  async function signOut() { await fetch("/api/admin/session", { method: "DELETE", credentials: "same-origin" }); setSession(false); setProducts([]); setOrders([]); }
 
   function startNewProduct() {
     setEditing(null);
@@ -99,8 +86,8 @@ export function AdminDashboard() {
     <a href="/" className="admin-brand">NIVORA <span>ESSENTIALS</span></a>
     <form className="admin-login-card" onSubmit={signIn}>
       <div className="eyebrow">PRIVATE WORKSPACE</div><h1>Welcome <em>back.</em></h1>
-      <p>Sign in with the authorised Supabase admin account.</p>
-      <label>Email<input type="email" required autoComplete="username" value={email} onChange={e => setEmail(e.target.value)} /></label>
+      <p>Enter your private NIVORA admin credentials.</p>
+      <label>Admin ID<input required autoComplete="username" value={adminId} onChange={e => setAdminId(e.target.value)} /></label>
       <label>Password<input type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} /></label>
       {error && <p className="admin-error">{error}</p>}
       <button className="admin-primary" disabled={loading}>{loading ? "SIGNING IN…" : "SIGN IN"}</button>
@@ -113,7 +100,7 @@ export function AdminDashboard() {
       <a href="/" className="admin-brand">NIVORA <span>ESSENTIALS</span></a>
       <div className="admin-side-label">WORKSPACE</div>
       {(["overview", "products", "orders"] as const).map(value => <button key={value} className={tab === value ? "active" : ""} onClick={() => setTab(value)}>{value}</button>)}
-      <div className="admin-sidebar-bottom"><span>{session.user.email}</span><button onClick={signOut}>Sign out ↗</button></div>
+      <div className="admin-sidebar-bottom"><span>NIVORA ADMIN</span><button onClick={signOut}>Sign out ↗</button></div>
     </aside>
     <section className="admin-main">
       <header className="admin-topbar"><div><div className="eyebrow">NIVORA CONTROL ROOM</div><h1>{tab === "overview" ? "Overview" : tab === "products" ? "Products" : "Orders"}</h1></div><button className="admin-refresh" onClick={loadData}>↻ Refresh</button></header>
