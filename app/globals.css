@@ -306,3 +306,7 @@ body:has(.admin-shell) .site-header,body:has(.admin-shell) .site-footer{display:
 .admin-product-form input[type=file]{padding:10px;font-size:10px}
 
 .product-sprite-photo{min-height:240px;background-color:#eee8de;background-image:url('/products/catalog-real.webp');background-repeat:no-repeat;background-size:500% 400%;background-position:center}
+
+.product-illustration{min-height:240px;background:radial-gradient(ellipse at 50% 38%,#fffdf8 0%,#eee7dc 72%,#e6ded2 100%);padding:10px}
+.product-illustration svg{display:block;width:100%;height:100%;min-height:220px;max-height:280px}
+.product-illustration img{position:absolute;inset:0;z-index:1}
