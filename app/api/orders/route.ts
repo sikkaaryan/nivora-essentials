@@ -41,14 +41,12 @@ export async function POST(request: Request) {
     const { data: liveProducts, error: productError } = await supabase.from("products").select("id,name,audience,price,wholesale_price,min_quantity,sizes,active").in("id", productIds).eq("active", true);
     if (productError || !liveProducts) return NextResponse.json({ error: "We couldn't verify the current catalogue. Please try again shortly." }, { status: 502 });
     const validatedItems = [];
-    let totalUnits = 0;
     for (const item of items) {
       const product = liveProducts.find(candidate => candidate.id === item.productId);
       const quantity = Number(item.quantity);
       if (!product || !product.sizes.includes(item.size) || !Number.isInteger(quantity) || quantity < 1 || quantity > 500 || (orderType === "wholesale" && quantity < Number(product.min_quantity || 25))) {
         return NextResponse.json({ error: "One or more cart items are invalid. Please refresh your bag and try again." }, { status: 400 });
       }
-      totalUnits += quantity;
       validatedItems.push({ product_id: product.id, product_name: product.name, audience: product.audience, size: item.size, quantity, unit_price: orderType === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price, line_total: (orderType === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price) * quantity, min_quantity: Number(product.min_quantity || 25) });
     }
 
