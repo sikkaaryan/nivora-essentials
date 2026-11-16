@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { products as previewProducts, type Product } from "@/data/products";
+import { products as previewProducts, type Product } from "@/data/products";\ntype CatalogMode = "retail" | "wholesale";
 
 type CartItem = { productId: string; size: string; quantity: number };
 const audienceNames = ["All", "Men", "Women", "Boy", "Girl"];
@@ -14,7 +14,7 @@ function ProductArtwork({ product }: { product: Product }) {
   return <div className="product-art"><img src={artwork} alt={`${product.audience} ${product.type} collection artwork`} /></div>;
 }
 
-export function ProductCatalog() {
+export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
   const [products, setProducts] = useState<Product[]>(previewProducts);\n  const [audience, setAudience] = useState("All");
   const [type, setType] = useState("All");
   const [size, setSize] = useState("All");
@@ -116,7 +116,7 @@ export function ProductCatalog() {
           </article>)}</div> : <div className="empty-results">No styles match these filters. Try another size or range.</div>}
         </div>
       </div>
-      <p className="catalog-disclaimer">Luxury collection preview · All product artwork, styles, and INR prices are provisional concepts for review and can be changed before launch.</p>
+      <p className="catalog-disclaimer">{mode === "wholesale" ? "Wholesale prices, minimum quantities and stock are confirmed by our team after your enquiry. Displayed prices are indicative catalogue prices only." : "Collection preview · Product artwork, styles and INR prices are provisional and can be updated before launch."}</p>
 
       {selectedProduct && <div className="store-overlay" role="presentation" onMouseDown={e => { if (e.target === e.currentTarget) setSelectedProduct(null); }}>
         <section className="product-dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title">
@@ -150,7 +150,7 @@ export function ProductCatalog() {
                 <strong>₹{(product.price * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
-            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href="/checkout">CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
+            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href={mode === "wholesale" ? "/checkout?type=wholesale" : "/checkout?type=retail"}>CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
           </> : <div className="cart-empty"><p>Your bag is waiting for something comfortable.</p><button className="add-to-bag" onClick={() => setCartOpen(false)}>EXPLORE THE COLLECTION</button></div>}
         </aside>
       </div>}
