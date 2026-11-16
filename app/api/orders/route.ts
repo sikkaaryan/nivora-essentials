@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     }
 
     const subtotal = validatedItems.reduce((sum, item) => sum + item.line_total, 0);
-    const orderNumber = `NIV-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${randomUUID().replaceAll("-","").slice(0,10).toUpperCase()}`;
+    const orderNumber = `NIV-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${randomUUID().replaceAll("-","").toUpperCase()}`;
     const order = {
       order_number: orderNumber, order_type: orderType, status: "pending_confirmation",
       customer_name: name, customer_phone: phone, customer_email: email,
