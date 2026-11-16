@@ -129,7 +129,7 @@ export function ProductCatalog() {
             <p className="dialog-description">{selectedProduct.type} · {selectedProduct.tone} · Thoughtfully considered everyday comfort.</p>
             <label className="choice-label">SELECT SIZE</label>
             <div className="size-choices">{selectedProduct.sizes.map(s => <button key={s} className={selectedSize === s ? "selected" : ""} onClick={() => setSelectedSize(s)}>{s}</button>)}</div>
-            <label className="choice-label" htmlFor="product-quantity">QUANTITY</label>
+            <span className="choice-label">QUANTITY</span>
             <div className="quantity-control"><button onClick={() => setQuantity(q => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button><span>{quantity}</span><button onClick={() => setQuantity(q => Math.min(10, q + 1))} aria-label="Increase quantity">+</button></div>
             <button className="add-to-bag" onClick={addToCart}>ADD TO BAG — ₹{(selectedProduct.price * quantity).toLocaleString("en-IN")}</button>
             <p className="provisional-note">Preview product · Final images, fabric details and stock confirmation will be added before launch.</p>
