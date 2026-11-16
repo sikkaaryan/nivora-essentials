@@ -7,6 +7,7 @@ create table if not exists public.products (
   type text not null,
   range text not null check (range in ('Essential', 'Everyday', 'Premium', 'Luxury')),
   price integer not null check (price > 0),\n  wholesale_price integer check (wholesale_price > 0 and wholesale_price <= price),
+  min_quantity integer not null default 25 check (min_quantity >= 1),
   sizes text[] not null default '{}',
   tone text not null default 'Classic',
   image_url text,
@@ -19,3 +20,5 @@ alter table public.products enable row level security;
 -- No public write policies. Admin API uses server-side service role after checking the signed-in user's email against ADMIN_EMAILS.
 
 alter table public.products add column if not exists wholesale_price integer;
+
+alter table public.products add column if not exists min_quantity integer not null default 25 check (min_quantity >= 1);
