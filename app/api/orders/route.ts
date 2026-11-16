@@ -72,54 +72,54 @@ export async function POST(request: Request) {
     const resendKey = process.env.RESEND_API_KEY;
     const notifyEmail = process.env.ORDER_NOTIFICATION_EMAIL;
     if (resendKey) {
-      const itemLines = validatedItems.map(item => \`• \${item.product_name} / \${item.size} × \${item.quantity} — ₹\${item.line_total.toLocaleString("en-IN")}\`).join("\n");
-      const deliveryLine = \`\${address}, \${city}, \${state} - \${postalCode}\`;
+      const itemLines = validatedItems.map(item => `• ${item.product_name} / ${item.size} × ${item.quantity} — ₹${item.line_total.toLocaleString("en-IN")}`).join("\n");
+      const deliveryLine = `${address}, ${city}, ${state} - ${postalCode}`;
       const emailText = [
-        \`NEW NIVORA \${orderType.toUpperCase()} ORDER: \${orderNumber}\`,
-        \`Order reference: \${orderNumber}\`, \`Order type: \${orderType}\`,
-        \`Customer name: \${name}\`, \`Customer email: \${email}\`, \`Customer phone: \${phone}\`,
-        \`Business: \${order.business_name ?? "—"}\`, \`GSTIN: \${order.gstin ?? "—"}\`,
-        \`Delivery address: \${deliveryLine}\`,
-        "", "Items:", itemLines, "", \`Estimated subtotal: ₹\${subtotal.toLocaleString("en-IN")}\`,
-        \`Notes: \${order.customer_notes ?? "—"}\`, "Payment: Pay later — confirmation required.",
+        `NEW NIVORA ${orderType.toUpperCase()} ORDER: ${orderNumber}`,
+        `Order reference: ${orderNumber}`, `Order type: ${orderType}`,
+        `Customer name: ${name}`, `Customer email: ${email}`, `Customer phone: ${phone}`,
+        `Business: ${order.business_name ?? "—"}`, `GSTIN: ${order.gstin ?? "—"}`,
+        `Delivery address: ${deliveryLine}`,
+        "", "Items:", itemLines, "", `Estimated subtotal: ₹${subtotal.toLocaleString("en-IN")}`,
+        `Notes: ${order.customer_notes ?? "—"}`, "Payment: Pay later — confirmation required.",
       ].join("\n");
       const sendEmail = async (to: string, subject: string, text: string) => {
         try {
           const response = await fetch("https://api.resend.com/emails", {
             method: "POST",
-            headers: { Authorization: \`Bearer \${resendKey}\`, "Content-Type": "application/json" },
+            headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               from: process.env.RESEND_FROM_EMAIL || "NIVORA Orders <onboarding@resend.dev>",
               to: [to], subject, text,
             }),
           });
-          if (!response.ok) console.error(\`Resend email failed for \${to}:\`, await response.text());
+          if (!response.ok) console.error(`Resend email failed for ${to}:`, await response.text());
           return response.ok;
         } catch (mailError) {
-          console.error(\`Resend request failed for \${to}:\`, mailError);
+          console.error(`Resend request failed for ${to}:`, mailError);
           return false;
         }
       };
 
       const sends: Promise<void>[] = [];
       if (notifyEmail) {
-        sends.push(sendEmail(notifyEmail, \`New \${orderType} order \${orderNumber}\`, emailText)
+        sends.push(sendEmail(notifyEmail, `New ${orderType} order ${orderNumber}`, emailText)
           .then(sent => { emailSent = sent; }));
       }
       if (email) {
         const customerText = [
-          \`Hello \${name},\`,
+          `Hello ${name},`,
           "",
           "Thank you for placing an order with NIVORA ESSENTIALS.",
           "We have received your order request. Our team will review it and contact you to confirm availability and the next steps.",
           "",
-          \`Order reference: \${orderNumber}\`,
-          \`Order type: \${orderType === "wholesale" ? "Wholesale" : "Retail"}\`,
+          `Order reference: ${orderNumber}`,
+          `Order type: ${orderType === "wholesale" ? "Wholesale" : "Retail"}`,
           "",
           "ORDER SUMMARY",
           itemLines,
           "",
-          \`Subtotal: ₹\${subtotal.toLocaleString("en-IN")}\`,
+          `Subtotal: ₹${subtotal.toLocaleString("en-IN")}`,
           "Payment status: Not paid — payment will be arranged after order confirmation.",
           "",
           "DELIVERY DETAILS",
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
           "NIVORA ESSENTIALS",
           "Comfort for Every Body.",
         ].join("\n");
-        sends.push(sendEmail(email, \`We received your NIVORA order \${orderNumber}\`, customerText)
+        sends.push(sendEmail(email, `We received your NIVORA order ${orderNumber}`, customerText)
           .then(sent => { customerEmailSent = sent; }));
       }
       await Promise.all(sends);
