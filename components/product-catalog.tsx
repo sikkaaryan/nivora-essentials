@@ -77,17 +77,21 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
     setQuantity(mode === "wholesale" ? Number((product as CatalogProduct).min_quantity || 25) : 1);
     setNotice("");
   }
+  function addItem(product: CatalogProduct, itemSize: string, itemQuantity: number) {
+    if (!itemSize || !Number.isInteger(itemQuantity) || itemQuantity < 1) return;
+    setCart(current => {
+      const existing = current.find(item => item.productId === product.id && item.size === itemSize);
+      return existing
+        ? current.map(item => item.productId === product.id && item.size === itemSize ? { ...item, quantity: item.quantity + itemQuantity } : item)
+        : [...current, { productId: product.id, size: itemSize, quantity: itemQuantity }];
+    });
+    setNotice(`${product.name} added to your bag`);
+    setCartOpen(true);
+  }
   function addToCart() {
     if (!selectedProduct || !selectedSize) return;
-    setCart(current => {
-      const existing = current.find(item => item.productId === selectedProduct.id && item.size === selectedSize);
-      return existing
-        ? current.map(item => item === existing ? { ...item, quantity: item.quantity + quantity } : item)
-        : [...current, { productId: selectedProduct.id, size: selectedSize, quantity }];
-    });
+    addItem(selectedProduct, selectedSize, quantity);
     setSelectedProduct(null);
-    setNotice(`${selectedProduct.name} added to your bag`);
-    setCartOpen(true);
   }
   function updateQuantity(productId: string, itemSize: string, next: number) {
     setCart(current => next <= 0
@@ -123,7 +127,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
             <div className="product-meta"><span>{product.audience.toUpperCase()} · {product.range.toUpperCase()}</span><span>₹{displayPrice(product).toLocaleString("en-IN")}</span></div>
             <h3>{product.name}</h3>
             <p>{product.type} <span>·</span> {product.sizes.join(" / ")}</p>{mode === "wholesale" && <p>Minimum {Number(product.min_quantity || 25)} units · 30% trade saving</p>}
-            <button className="quick-add" onClick={() => openProduct(product)}>VIEW DETAILS <span>↗</span></button>
+            <div className="product-card-actions"><button className="quick-add" onClick={() => openProduct(product)}>VIEW DETAILS <span>↗</span></button><button className="quick-add" onClick={() => addItem(product, product.sizes[0] ?? "", mode === "wholesale" ? Number(product.min_quantity || 25) : 1)}>ADD TO BAG <span>＋</span></button></div>
           </article>)}</div> : <div className="empty-results">No styles match these filters. Try another size or range.</div>}
         </div>
       </div>
@@ -150,7 +154,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
 
       {cartOpen && <div className="store-overlay cart-overlay" role="presentation" onMouseDown={e => { if (e.target === e.currentTarget) setCartOpen(false); }}>
         <aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
-          <div className="cart-header"><div><div className="eyebrow">YOUR SELECTION</div><h2 id="cart-title">Shopping bag ({cartCount})</h2></div><button className="dialog-close" onClick={() => setCartOpen(false)} aria-label="Close shopping bag">×</button></div>
+          <div className="cart-header"><div><div className="eyebrow">YOUR SELECTION</div><h2 id="cart-title">Shopping bag ({cartCount})</h2></div><div className="cart-header-actions">{cart.length > 0 && <button className="continue-shopping" onClick={() => { setCart([]); localStorage.removeItem(cartKey); }}>CLEAR BAG</button>}<button className="dialog-close" onClick={() => setCartOpen(false)} aria-label="Close shopping bag">×</button></div></div>
           {cart.length ? <>
             <div className="cart-items">{cart.map(item => {
               const product = products.find(p => p.id === item.productId);
@@ -161,7 +165,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
                 <strong>₹{(displayPrice(product) * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
-            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href={mode === "wholesale" ? "/checkout?type=wholesale" : "/checkout?type=retail"}>CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
+            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href={mode === "wholesale" ? "/checkout?type=wholesale" : "/checkout?type=retail"}>CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => { setCart([]); localStorage.removeItem(cartKey); }}>Clear entire bag</button><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
           </> : <div className="cart-empty"><p>Your bag is waiting for something comfortable.</p><button className="add-to-bag" onClick={() => setCartOpen(false)}>EXPLORE THE COLLECTION</button></div>}
         </aside>
       </div>}
