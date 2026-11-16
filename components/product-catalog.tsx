@@ -126,7 +126,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
             <ProductArtwork product={product} />
             <div className="product-meta"><span>{product.audience.toUpperCase()} · {product.range.toUpperCase()}</span><span>₹{displayPrice(product).toLocaleString("en-IN")}</span></div>
             <h3>{product.name}</h3>
-            <p>{product.type} <span>·</span> {product.sizes.join(" / ")}</p>
+            <p>{product.type} <span>·</span> {product.sizes.join(" / ")}</p>{mode === "wholesale" && <p>Minimum {Number(product.min_quantity || 25)} units · 30% trade saving</p>}
             <button className="quick-add" onClick={() => openProduct(product)}>VIEW DETAILS <span>↗</span></button>
           </article>)}</div> : <div className="empty-results">No styles match these filters. Try another size or range.</div>}
         </div>
@@ -161,7 +161,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
               if (!product) return null;
               return <div className="cart-item" key={`${item.productId}-${item.size}`}>
                 <div className="cart-item-art"><ProductArtwork product={product} /></div>
-                <div className="cart-item-info"><strong>{product.name}</strong><span>Size {item.size} · ₹{displayPrice(product).toLocaleString("en-IN")}</span><div className="cart-item-actions"><button onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1 < (mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1) ? (mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1) : item.quantity - 1)}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.productId, item.size, Math.min(500, item.quantity + 1)}>+</button><button className="remove-item" onClick={() => updateQuantity(item.productId, item.size, 0)}>Remove</button></div></div>
+                <div className="cart-item-info"><strong>{product.name}</strong><span>Size {item.size} · ₹{displayPrice(product).toLocaleString("en-IN")}</span><div className="cart-item-actions"><button onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1 < (mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1) ? (mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1) : Math.max(mode === "wholesale" ? Number(products.find(p => p.id === item.productId)?.min_quantity || 25) : 1, item.quantity - 1)}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.productId, item.size, Math.min(500, Math.min(500, item.quantity + 1)}>+</button><button className="remove-item" onClick={() => updateQuantity(item.productId, item.size, 0)}>Remove</button></div></div>
                 <strong>₹{(displayPrice(product) * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
