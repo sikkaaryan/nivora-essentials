@@ -150,7 +150,7 @@ export function ProductCatalog() {
                 <strong>₹{(product.price * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
-            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><button className="add-to-bag" onClick={() => { setCartOpen(false); setNotice("Your bag is saved. Checkout and pay-later ordering are the next build step."); }}>CONTINUE TO ORDER</button><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
+            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href="/checkout">CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
           </> : <div className="cart-empty"><p>Your bag is waiting for something comfortable.</p><button className="add-to-bag" onClick={() => setCartOpen(false)}>EXPLORE THE COLLECTION</button></div>}
         </aside>
       </div>}
