@@ -304,3 +304,5 @@ body:has(.admin-shell) .site-header,body:has(.admin-shell) .site-footer{display:
 .admin-image-preview img{width:96px;height:112px;object-fit:cover;background:var(--surface)}
 .admin-image-preview button{border:0;background:transparent;color:var(--text);font-size:9px;letter-spacing:.12em;text-decoration:underline;cursor:pointer}
 .admin-product-form input[type=file]{padding:10px;font-size:10px}
+
+.product-sprite-photo{min-height:240px;background-color:#eee8de;background-image:url('/products/catalog-real.webp');background-repeat:no-repeat;background-size:500% 400%;background-position:center}
