@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const address = clean(body.address, 300);
     const city = clean(body.city, 100);
     const state = clean(body.state, 100);
-    const postalCode = clean(body.postalCode, 6);
+    const postalCode = clean(body.postalCode, 6);\n    const businessName = clean(body.businessName, 160);
     const orderType = body.orderType === "wholesale" ? "wholesale" : "retail";
     const items = Array.isArray(body.items) ? body.items : [];
 
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     const order = {
       order_number: orderNumber, order_type: orderType, status: "pending_confirmation",
       customer_name: name, customer_phone: phone, customer_email: email,
-      business_name: clean(body.businessName, 160) || null, gstin: clean(body.gstin, 20) || null,
+      business_name: businessName || null, gstin: clean(body.gstin, 20) || null,
       delivery_address: address, delivery_city: city, delivery_state: state, delivery_postal_code: postalCode,
       customer_notes: clean(body.notes, 1000) || null, items: validatedItems, subtotal_inr: subtotal,
       currency: "INR", payment_status: "unpaid",
