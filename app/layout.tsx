@@ -40,7 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </nav>
           <div className="header-actions">
             <ThemeToggle />
-            <a className="bag-link" href="#collections">Shop <span aria-hidden="true">↗</span></a>
+            <a className="bag-link" href="/retail">Shop <span aria-hidden="true">↗</span></a>
           </div>
         </header>
         {children}
