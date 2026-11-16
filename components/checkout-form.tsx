@@ -6,12 +6,13 @@ type StoreProduct = { id: string; name: string; price: number; wholesale_price?:
 
 type CartItem = { productId: string; size: string; quantity: number };
 type OrderType = "retail" | "wholesale";
-const CART_KEY = "nivora-cart-v1";
+const cartKeyFor = (type: OrderType) => `nivora-cart-v1-${type}`;
 
 export function CheckoutForm() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [products, setProducts] = useState<StoreProduct[]>([]);
   const [orderType, setOrderType] = useState<OrderType>("retail");
+  const [sourceReady, setSourceReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{ orderNumber: string; emailSent: boolean } | null>(null);
@@ -23,11 +24,13 @@ export function CheckoutForm() {
   useEffect(() => {
     fetch("/api/products").then(r => r.ok ? r.json() : null).then(data => { if (Array.isArray(data?.products)) setProducts(data.products); }).catch(() => undefined);
     const requestedType = new URLSearchParams(window.location.search).get("type");
-    if (requestedType === "wholesale") setOrderType("wholesale");
+    const source: OrderType = requestedType === "wholesale" ? "wholesale" : "retail";
+    setOrderType(source);
     try {
-      const saved = localStorage.getItem(CART_KEY);
+      const saved = localStorage.getItem(cartKeyFor(source));
       if (saved) setCart(JSON.parse(saved) as CartItem[]);
     } catch { setCart([]); }
+    setSourceReady(true);
   }, []);
 
   const subtotal = useMemo(() => cart.reduce((sum, item) => {
@@ -55,7 +58,7 @@ export function CheckoutForm() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "We could not submit your order. Please try again.");
       setSuccess({ orderNumber: result.orderNumber, emailSent: Boolean(result.emailSent) });
-      localStorage.removeItem(CART_KEY);
+      localStorage.removeItem(cartKeyFor(orderType));
       setCart([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -79,12 +82,14 @@ export function CheckoutForm() {
     <form className="checkout-grid" onSubmit={submitOrder}>
       <div className="checkout-fields">
         <section className="checkout-panel">
-          <div className="checkout-section-title"><span>01</span><h2>Order type</h2></div>
+          <div className="checkout-section-title"><span>01</span><h2>Shopping channel</h2></div>
           <div className="order-type-options">
-            <button type="button" className={orderType === "retail" ? "chosen" : ""} onClick={() => setOrderType("retail")}><strong>Personal order</strong><span>Shop for yourself or family</span></button>
-            <button type="button" className={orderType === "wholesale" ? "chosen" : ""} onClick={() => setOrderType("wholesale")}><strong>Wholesale order</strong><span>Bulk buying with per-product minimum quantities</span></button>
+            <div className="chosen" aria-live="polite">
+              <strong>{orderType === "wholesale" ? "Wholesale checkout" : "Retail checkout"}</strong>
+              <span>{orderType === "wholesale" ? "You arrived from the Wholesale collection · 30% below retail" : "You arrived from the Retail collection · Standard retail pricing"}</span>
+            </div>
           </div>
-          {orderType === "wholesale" && <p className="checkout-hint">Each product has its own minimum quantity. Wholesale prices are 30% below the listed retail price; final availability is confirmed before payment.</p>}
+          {orderType === "wholesale" && <p className="checkout-hint">Each product has its own minimum order quantity. The minimum is shown beside every item in your order summary.</p>}
         </section>
 
         <section className="checkout-panel">
@@ -111,7 +116,7 @@ export function CheckoutForm() {
           </div>
         </section>
         {error && <p className="checkout-error" role="alert">{error}</p>}
-        <button className="checkout-submit" type="submit" disabled={loading || !cart.length || invalidWholesale}>{loading ? "PLACING YOUR ORDER…" : "PLACE ORDER — PAY LATER"}</button>
+        <button className="checkout-submit" type="submit" disabled={!sourceReady || loading || !cart.length || invalidWholesale}>{loading ? "PLACING YOUR ORDER…" : "PLACE ORDER — PAY LATER"}</button>
         <p className="checkout-legal">No online payment is collected at this stage. Our team will contact you to confirm stock, shipping and payment instructions.</p>
       </div>
 
