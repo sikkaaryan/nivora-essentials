@@ -33,7 +33,7 @@ export function CheckoutForm() {
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = useMemo(() => cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
-    return sum + (product ? (orderType === "wholesale" && product.wholesale_price || Math.round(product.price * 0.7)) : 0) * item.quantity;
+    return sum + (product ? (orderType === "wholesale" ? (product.wholesale_price || Math.round(product.price * 0.7)) : product.price) : 0) * item.quantity;
   }, 0), [cart, products, orderType]);
   const invalidWholesale = orderType === "wholesale" && cart.some(item => item.quantity < Number(products.find(p => p.id === item.productId)?.min_quantity || 25));
 
