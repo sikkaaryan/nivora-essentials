@@ -31,6 +31,12 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
+    let mounted = true;
+    fetch("/api/products").then(response => response.ok ? response.json() : null).then(data => { if (mounted && Array.isArray(data?.products)) setProducts(data.products); }).catch(() => undefined);
+    return () => { mounted = false; };
+  }, []);
+
+  useEffect(() => {
     try {
       const saved = localStorage.getItem(CART_KEY);
       if (saved) setCart(JSON.parse(saved) as CartItem[]);
