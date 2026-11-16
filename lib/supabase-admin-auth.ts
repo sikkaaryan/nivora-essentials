@@ -18,7 +18,7 @@ export async function requireAdmin(request: Request) {
 export function createAdminSessionResponse(request: Request) {
  const secret=process.env.ADMIN_SESSION_SECRET||""; const expires=String(Date.now()+8*60*60*1000);
  const signature=createHmac("sha256",secret).update(expires).digest("hex");
- const secure=new URL(request.url).protocol==="https:"?"; Secure":"";
+ const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
  return new Response(JSON.stringify({ok:true}),{status:200,headers:{"Content-Type":"application/json","Set-Cookie":COOKIE+"="+expires+"."+signature+"; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800"+secure}});
 }
 export function clearAdminSessionResponse() {
