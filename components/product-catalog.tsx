@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { products as previewProducts, type Product } from "@/data/products";
-type CatalogMode = "retail" | "wholesale";
+type CatalogMode = "retail" | "wholesale";\ntype CatalogProduct = Product & { wholesale_price?: number | null };
 
 type CartItem = { productId: string; size: string; quantity: number };
 const audienceNames = ["All", "Men", "Women", "Boy", "Girl"];
@@ -16,7 +16,7 @@ function ProductArtwork({ product }: { product: Product }) {
 }
 
 export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
-  const [products, setProducts] = useState<Product[]>(previewProducts);
+  const [products, setProducts] = useState<CatalogProduct[]>(previewProducts);
   const [audience, setAudience] = useState("All");
   const [type, setType] = useState("All");
   const [size, setSize] = useState("All");
@@ -55,10 +55,10 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
     return list;
   }, [audience, type, size, range, sort]);
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const displayPrice = (product: CatalogProduct) => mode === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price;\n  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
-    return sum + (product?.price ?? 0) * item.quantity;
+    return sum + (product ? displayPrice(product) : 0) * item.quantity;
   }, 0);
 
   function changeAudience(value: string) { setAudience(value); setType("All"); }
@@ -111,14 +111,14 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
           <div className="results-bar"><span>{filtered.length} STYLES</span><label>Sort by <select value={sort} onChange={e => setSort(e.target.value)}><option value="featured">Featured</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label></div>
           {filtered.length ? <div className="product-grid">{filtered.map(product => <article className="product-card" key={product.id}>
             <ProductArtwork product={product} />
-            <div className="product-meta"><span>{product.audience.toUpperCase()} · {product.range.toUpperCase()}</span><span>₹{product.price.toLocaleString("en-IN")}</span></div>
+            <div className="product-meta"><span>{product.audience.toUpperCase()} · {product.range.toUpperCase()}</span><span>₹{displayPrice(product).toLocaleString("en-IN")}</span></div>
             <h3>{product.name}</h3>
             <p>{product.type} <span>·</span> {product.sizes.join(" / ")}</p>
             <button className="quick-add" onClick={() => openProduct(product)}>VIEW DETAILS <span>↗</span></button>
           </article>)}</div> : <div className="empty-results">No styles match these filters. Try another size or range.</div>}
         </div>
       </div>
-      <p className="catalog-disclaimer">{mode === "wholesale" ? "Wholesale prices, minimum quantities and stock are confirmed by our team after your enquiry. Displayed prices are indicative catalogue prices only." : "Collection preview · Product artwork, styles and INR prices are provisional and can be updated before launch."}</p>
+      <p className="catalog-disclaimer">{mode === "wholesale" ? "Trade prices are shown where configured; otherwise the listed retail amount is indicative only. Our team confirms wholesale rates, minimum quantities and stock after your enquiry." : "Collection preview · Product artwork, styles and INR prices are provisional and can be updated before launch."}</p>
 
       {selectedProduct && <div className="store-overlay" role="presentation" onMouseDown={e => { if (e.target === e.currentTarget) setSelectedProduct(null); }}>
         <section className="product-dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title">
@@ -127,13 +127,13 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
           <div className="dialog-copy">
             <div className="eyebrow">{selectedProduct.audience} · {selectedProduct.range}</div>
             <h2 id="product-dialog-title">{selectedProduct.name}</h2>
-            <div className="dialog-price">₹{selectedProduct.price.toLocaleString("en-IN")}</div>
+            <div className="dialog-price">₹{displayPrice(selectedProduct).toLocaleString("en-IN")}</div>
             <p className="dialog-description">{selectedProduct.type} · {selectedProduct.tone} · Thoughtfully considered everyday comfort.</p>
             <label className="choice-label">SELECT SIZE</label>
             <div className="size-choices">{selectedProduct.sizes.map(s => <button key={s} className={selectedSize === s ? "selected" : ""} onClick={() => setSelectedSize(s)}>{s}</button>)}</div>
             <span className="choice-label">QUANTITY</span>
             <div className="quantity-control"><button onClick={() => setQuantity(q => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button><span>{quantity}</span><button onClick={() => setQuantity(q => Math.min(10, q + 1))} aria-label="Increase quantity">+</button></div>
-            <button className="add-to-bag" onClick={addToCart}>ADD TO BAG — ₹{(selectedProduct.price * quantity).toLocaleString("en-IN")}</button>
+            <button className="add-to-bag" onClick={addToCart}>ADD TO BAG — ₹{(displayPrice(selectedProduct) * quantity).toLocaleString("en-IN")}</button>
             <p className="provisional-note">Preview product · Final images, fabric details and stock confirmation will be added before launch.</p>
           </div>
         </section>
@@ -148,8 +148,8 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
               if (!product) return null;
               return <div className="cart-item" key={`${item.productId}-${item.size}`}>
                 <div className="cart-item-art"><ProductArtwork product={product} /></div>
-                <div className="cart-item-info"><strong>{product.name}</strong><span>Size {item.size} · ₹{product.price.toLocaleString("en-IN")}</span><div className="cart-item-actions"><button onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}>+</button><button className="remove-item" onClick={() => updateQuantity(item.productId, item.size, 0)}>Remove</button></div></div>
-                <strong>₹{(product.price * item.quantity).toLocaleString("en-IN")}</strong>
+                <div className="cart-item-info"><strong>{product.name}</strong><span>Size {item.size} · ₹{displayPrice(product).toLocaleString("en-IN")}</span><div className="cart-item-actions"><button onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}>+</button><button className="remove-item" onClick={() => updateQuantity(item.productId, item.size, 0)}>Remove</button></div></div>
+                <strong>₹{(displayPrice(product) * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
             <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href={mode === "wholesale" ? "/checkout?type=wholesale" : "/checkout?type=retail"}>CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
