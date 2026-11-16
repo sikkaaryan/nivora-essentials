@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     const resendKey = process.env.RESEND_API_KEY;
     const notifyEmail = process.env.ORDER_NOTIFICATION_EMAIL;
     if (resendKey && notifyEmail) {
-      const itemLines = validatedItems.map(item => `• ${item.product_name} / ${item.size} × ${item.quantity} — ₹${item.line_total.toLocaleString("en-IN")}`).join("\\n");
+      const itemLines = validatedItems.map(item => `• ${item.product_name} / ${item.size} × ${item.quantity} — ₹${item.line_total.toLocaleString("en-IN")}`).join("\n");
       const emailText = [
         `New NIVORA ${orderType} order: ${orderNumber}`,
         `Customer: ${name}`, `Phone: ${phone}`, `Email: ${email}`,
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
         `Address: ${address}, ${city}, ${state} - ${postalCode}`,
         "", "Items:", itemLines, "", `Estimated subtotal: ₹${subtotal.toLocaleString("en-IN")}`,
         `Notes: ${order.customer_notes ?? "—"}`, "Payment: Pay later — confirmation required.",
-      ].join("\\n");
+      ].join("\n");
       try {
         const mailResponse = await fetch("https://api.resend.com/emails", {
           method: "POST", headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
