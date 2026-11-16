@@ -21,7 +21,7 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [editing, setEditing] = useState<AdminProduct | null>(null);
+  const [editing, setEditing] = useState<AdminProduct | null>(null);\n  const [imageFile, setImageFile] = useState<File | null>(null);
   const [form, setForm] = useState({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", min_quantity: "25", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
 
   useEffect(() => { fetch("/api/admin/session").then(r => setSession(r.ok)).catch(() => setSession(false)); }, []);
@@ -124,7 +124,7 @@ export function AdminDashboard() {
           <div className="admin-form-pair"><label>Retail price (INR)<input type="number" min="1" required value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></label><label>Colour / tone<input value={form.tone} onChange={e => setForm({ ...form, tone: e.target.value })} /></label></div>
           <div className="admin-form-pair"><label>Wholesale price (INR · 30% off)<input type="number" value={form.price ? String(Math.round(Number(form.price) * 0.7)) : ""} readOnly /></label><label>Wholesale minimum quantity<input type="number" min="1" max="5000" required value={form.min_quantity} onChange={e => setForm({ ...form, min_quantity: e.target.value })} /></label></div>
           <label>Sizes (comma separated)<input required value={form.sizes} onChange={e => setForm({ ...form, sizes: e.target.value })} /></label>
-          <label>Image URL (optional)<input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://…" /></label>
+          <label>Product photo (JPG, PNG or WebP · max 5 MB)<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => setImageFile(e.target.files?.[0] || null)} /></label>\n          {(imageFile || form.image_url) && <div className="admin-image-preview"><img src={imageFile ? URL.createObjectURL(imageFile) : form.image_url} alt="Product preview" /><button type="button" onClick={() => { setImageFile(null); setForm({ ...form, image_url: "" }); }}>REMOVE PHOTO</button></div>}\n          <label>Or paste image URL<input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://…" /></label>
           <button className="admin-primary">{editing ? "SAVE CHANGES" : "ADD PRODUCT"}</button>
         </form>
       </div>}
