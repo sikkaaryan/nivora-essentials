@@ -56,7 +56,7 @@ export function AdminDashboard() {
 
   function startNewProduct() {
     setEditing(null);
-    setForm({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
+    setForm({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", min_quantity: "25", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
   }
   function startEdit(product: AdminProduct) {
     setEditing(product);
