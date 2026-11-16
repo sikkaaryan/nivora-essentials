@@ -17,3 +17,5 @@ create table if not exists public.products (
 create index if not exists products_active_idx on public.products (active);
 alter table public.products enable row level security;
 -- No public write policies. Admin API uses server-side service role after checking the signed-in user's email against ADMIN_EMAILS.
+
+alter table public.products add column if not exists wholesale_price integer;
