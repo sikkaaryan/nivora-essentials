@@ -31,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <IntroScreen />
         <header className="site-header">
           <a className="header-wordmark" href="/" aria-label="NIVORA Essentials home">
-            NIV<span className="wordmark-v">O</span>RA<span className="header-essentials">ESSENTIALS</span>
+            NI<span className="wordmark-v">V</span>ORA<span className="header-essentials">ESSENTIALS</span>
           </a>
           <nav className="desktop-nav" aria-label="Main navigation">
             <a href="#collections">Collections</a>
