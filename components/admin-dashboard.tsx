@@ -56,7 +56,7 @@ export function AdminDashboard() {
 
   function startNewProduct() {
     setEditing(null);
-    setForm({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
+    setForm({ id: "", name: "", audience: "Men", type: "", range: "Essential", price: "799", wholesale_price: "", sizes: "S, M, L, XL", tone: "Classic", image_url: "" });
   }
   function startEdit(product: AdminProduct) {
     setEditing(product);
@@ -91,7 +91,6 @@ export function AdminDashboard() {
       <label>Password<input type="password" required autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} /></label>
       {error && <p className="admin-error">{error}</p>}
       <button className="admin-primary" disabled={loading}>{loading ? "SIGNING IN…" : "SIGN IN"}</button>
-      {!supabase && <p className="admin-hint">Supabase public URL and anon key are not configured yet.</p>}
     </form>
   </main>;
 
