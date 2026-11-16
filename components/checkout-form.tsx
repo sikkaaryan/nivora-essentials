@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-type StoreProduct = { id: string; name: string; price: number; sizes: string[] };
+type StoreProduct = { id: string; name: string; price: number; wholesale_price?: number | null; sizes: string[] };
 
 type CartItem = { productId: string; size: string; quantity: number };
 type OrderType = "retail" | "wholesale";
@@ -34,7 +34,7 @@ export function CheckoutForm() {
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = useMemo(() => cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
-    return sum + (product?.price ?? 0) * item.quantity;
+    return sum + (product ? (orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) : 0) * item.quantity;
   }, 0), [cart]);
   const invalidWholesale = orderType === "wholesale" && itemCount < WHOLESALE_MINIMUM_UNITS;
 
@@ -122,7 +122,7 @@ export function CheckoutForm() {
         {cart.length ? cart.map(item => {
           const product = products.find(p => p.id === item.productId);
           if (!product) return null;
-          return <div className="checkout-line" key={item.productId + item.size}><div><strong>{product.name}</strong><span>Size {item.size} · Qty {item.quantity}</span></div><b>₹{(product.price * item.quantity).toLocaleString("en-IN")}</b></div>;
+          return <div className="checkout-line" key={item.productId + item.size}><div><strong>{product.name}</strong><span>Size {item.size} · Qty {item.quantity}</span></div><b>₹{((orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) * item.quantity).toLocaleString("en-IN")}</b></div>;
         }) : <p className="checkout-hint">Your bag is empty. <Link href="/#shop">Explore the collection.</Link></p>}
         <div className="checkout-total"><span>Estimated subtotal</span><strong>₹{subtotal.toLocaleString("en-IN")}</strong></div>
         <p className="checkout-hint">Shipping, taxes (if applicable), wholesale rates and final stock availability are confirmed by our team. This is not a payment request.</p>
