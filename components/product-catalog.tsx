@@ -44,7 +44,7 @@ export function ProductCatalog() {
     <section className="catalog-section" id="shop">
       <div className="catalog-heading">
         <div><div className="eyebrow">THE FIRST NIVORA EDIT</div><h2>Everyday, considered.</h2></div>
-        <p>20 starting styles across four collections. Explore the range and find your fit.</p>
+        <p>20 curated styles across four collections, with considered luxury pricing. Explore the range and find your fit.</p>
       </div>
       <div className="audience-tabs" aria-label="Shop by audience">
         {audienceNames.map(name => <button key={name} className={audience===name ? "active" : ""} onClick={() => changeAudience(name)}>{name === "All" ? "All" : name === "Boy" ? "Boys" : name === "Girl" ? "Girls" : name}</button>)}
@@ -68,7 +68,7 @@ export function ProductCatalog() {
           </article>)}</div> : <div className="empty-results">No styles match these filters. Try another size or range.</div>}
         </div>
       </div>
-      <p className="catalog-disclaimer">Launch collection preview · Product artwork, styles and INR prices are provisional examples and can be changed before launch.</p>
+      <p className="catalog-disclaimer">Luxury collection preview · All product artwork, styles, and INR prices are provisional concepts for review and can be changed before launch.</p>
     </section>
   );
 }
