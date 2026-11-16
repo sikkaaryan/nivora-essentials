@@ -49,7 +49,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
     if (ready) localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }, [cart, ready]);
 
-  const types = useMemo(() => ["All", ...Array.from(new Set(products.filter(p => audience === "All" || p.audience === audience).map(p => p.type)))], [audience]);
+  const types = useMemo(() => ["All", ...Array.from(new Set(products.filter(p => audience === "All" || p.audience === audience).map(p => p.type)))], [audience, products]);
   const filtered = useMemo(() => {
     const list = products.filter(p =>
       (audience === "All" || p.audience === audience) &&
@@ -60,7 +60,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
     if (sort === "low") list.sort((a, b) => a.price - b.price);
     if (sort === "high") list.sort((a, b) => b.price - a.price);
     return list;
-  }, [audience, type, size, range, sort]);
+  }, [audience, type, size, range, sort, products]);
 
   const displayPrice = (product: CatalogProduct) => mode === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price;
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
