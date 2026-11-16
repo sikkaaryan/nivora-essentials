@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
-import { products } from "@/data/products";
+
 
 export const runtime = "nodejs";
 
@@ -34,10 +34,17 @@ export async function POST(request: Request) {
     }
     if (!items.length || items.length > 50) return NextResponse.json({ error: "Your order must contain between 1 and 50 line items." }, { status: 400 });
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceKey) return NextResponse.json({ error: "Checkout is not connected yet. The store owner needs to configure Supabase in the deployment environment." }, { status: 503 });
+    const supabase = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const productIds = [...new Set(items.map(item => item.productId))];
+    const { data: liveProducts, error: productError } = await supabase.from("products").select("id,name,audience,price,sizes,active").in("id", productIds).eq("active", true);
+    if (productError || !liveProducts) return NextResponse.json({ error: "We couldn't verify the current catalogue. Please try again shortly." }, { status: 502 });
     const validatedItems = [];
     let totalUnits = 0;
     for (const item of items) {
-      const product = products.find(candidate => candidate.id === item.productId);
+      const product = liveProducts.find(candidate => candidate.id === item.productId);
       const quantity = Number(item.quantity);
       if (!product || !product.sizes.includes(item.size) || !Number.isInteger(quantity) || quantity < 1 || quantity > 50) {
         return NextResponse.json({ error: "One or more cart items are invalid. Please refresh your bag and try again." }, { status: 400 });
