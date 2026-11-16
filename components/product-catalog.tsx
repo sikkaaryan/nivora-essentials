@@ -13,7 +13,13 @@ const cartKeyFor = (mode: CatalogMode) => `nivora-cart-v1-${mode}`;
 
 function ProductArtwork({ product }: { product: CatalogProduct }) {
   if (product.image_url) return <div className="product-art product-real-photo"><img src={product.image_url} alt={product.name} loading="lazy" /></div>;
-  return <div className="product-art product-photo-missing"><span>PRODUCT PHOTO</span><small>COMING SOON</small></div>;
+  const index = previewProducts.findIndex(item => item.id === product.id);
+  if (index >= 0) {
+    const col = index % 5;
+    const row = Math.floor(index / 5);
+    return <div className="product-art product-sprite-photo" role="img" aria-label={product.name} style={{ backgroundImage: "url('/products/catalog-real.webp')", backgroundPosition: `${col * 25}% ${row * (100 / 3)}%` }} />;
+  }
+  return <div className="product-art product-sprite-photo" role="img" aria-label={product.name} />;
 }
 
 export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
