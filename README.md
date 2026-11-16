@@ -7,7 +7,9 @@ Premium everyday essentials for men, women, boys, and girls.
 ## Brand direction
 - Primary identity: charcoal and warm ivory, with a refined serif wordmark and signature V detail.
 - Website themes: persistent light and dark modes.
-- Intro: cinematic NIVORA wordmark reveal with a skip control.
+- Intro: cinematic NIVORA wordmark reveal with a skip control on the homepage only.
+- Product imagery: generated sample clothing photography mapped to all 20 preview products; replace with approved supplier/product photography before launch.
+- Homepage footer: discreet “For owner” link to the private `/admin` workspace.
 - Audience: men, women, boys, and girls.
 - Retail and wholesale share a catalogue; wholesale currently has a provisional minimum of 10 units. Confirm the final MOQ and wholesale price list before launch.
 
@@ -28,7 +30,8 @@ Premium everyday essentials for men, women, boys, and girls.
 ## Environment variables
 - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase public anon key (not currently needed by the checkout API).
-- `SUPABASE_SERVICE_ROLE_KEY`: server-only key used to insert orders.
+- `SUPABASE_SERVICE_ROLE_KEY`: server-only Supabase secret/service key used by order and admin APIs. Obtain it from Supabase project API keys; never commit it to this public repository.
+- `ADMIN_ID`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`: private admin login credentials; use a long random session secret.
 - `RESEND_API_KEY`: server-only Resend API key.
 - `ORDER_NOTIFICATION_EMAIL`: store inbox for new order alerts.
 - `RESEND_FROM_EMAIL`: optional sender address verified in Resend. If omitted, the API uses Resend's onboarding sender for initial testing.
