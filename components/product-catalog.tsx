@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { products, type Product } from "@/data/products";
+import { products as previewProducts, type Product } from "@/data/products";
 
 type CartItem = { productId: string; size: string; quantity: number };
 const audienceNames = ["All", "Men", "Women", "Boy", "Girl"];
@@ -15,7 +15,7 @@ function ProductArtwork({ product }: { product: Product }) {
 }
 
 export function ProductCatalog() {
-  const [audience, setAudience] = useState("All");
+  const [products, setProducts] = useState<Product[]>(previewProducts);\n  const [audience, setAudience] = useState("All");
   const [type, setType] = useState("All");
   const [size, setSize] = useState("All");
   const [range, setRange] = useState("All");
