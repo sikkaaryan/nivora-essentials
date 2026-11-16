@@ -24,11 +24,12 @@ export async function POST(request: Request) {
     const address = clean(body.address, 300);
     const city = clean(body.city, 100);
     const state = clean(body.state, 100);
-    const postalCode = clean(body.postalCode, 6);\n    const businessName = clean(body.businessName, 160);
+    const postalCode = clean(body.postalCode, 6);
+    const businessName = clean(body.businessName, 160);
     const orderType = body.orderType === "wholesale" ? "wholesale" : "retail";
     const items = Array.isArray(body.items) ? body.items : [];
 
-    if (!name || !phone || !/^\S+@\S+\.\S+$/.test(email) || !address || !city || !state || !/^\d{6}$/.test(postalCode)) {
+    if (!name || phone.replace(/\D/g, "").length < 10 || !/^\S+@\S+\.\S+$/.test(email) || !address || !city || !state || !/^\d{6}$/.test(postalCode) || (orderType === "wholesale" && !businessName)) {
       return NextResponse.json({ error: "Please complete all required customer and delivery details." }, { status: 400 });
     }
     if (!items.length || items.length > 50) return NextResponse.json({ error: "Your order must contain between 1 and 50 line items." }, { status: 400 });
