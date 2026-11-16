@@ -10,7 +10,8 @@ const CART_KEY = "nivora-cart-v1";
 const WHOLESALE_MINIMUM_UNITS = 10;
 
 export function CheckoutForm() {
-  const [cart, setCart] = useState<CartItem[]>([]);\n  const [products, setProducts] = useState<StoreProduct[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [products, setProducts] = useState<StoreProduct[]>([]);
   const [orderType, setOrderType] = useState<OrderType>("retail");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,6 +22,9 @@ export function CheckoutForm() {
   });
 
   useEffect(() => {
+    fetch("/api/products").then(r => r.ok ? r.json() : null).then(data => { if (Array.isArray(data?.products)) setProducts(data.products); }).catch(() => undefined);
+    const requestedType = new URLSearchParams(window.location.search).get("type");
+    if (requestedType === "wholesale") setOrderType("wholesale");
     try {
       const saved = localStorage.getItem(CART_KEY);
       if (saved) setCart(JSON.parse(saved) as CartItem[]);
