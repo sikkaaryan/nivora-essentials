@@ -12,7 +12,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Boxers",
     "range": "Everyday",
-    "price": 499,
+    "price": 4499,
     "sizes": [
       "S",
       "M",
@@ -28,7 +28,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Trunks",
     "range": "Premium",
-    "price": 699,
+    "price": 6499,
     "sizes": [
       "S",
       "M",
@@ -43,7 +43,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Briefs",
     "range": "Essential",
-    "price": 349,
+    "price": 3299,
     "sizes": [
       "S",
       "M",
@@ -59,7 +59,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "Vests",
     "range": "Everyday",
-    "price": 449,
+    "price": 3999,
     "sizes": [
       "M",
       "L",
@@ -74,7 +74,7 @@ export const products: Product[] = [
     "audience": "Men",
     "type": "T-shirts",
     "range": "Premium",
-    "price": 799,
+    "price": 5999,
     "sizes": [
       "S",
       "M",
@@ -90,7 +90,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Bras",
     "range": "Premium",
-    "price": 899,
+    "price": 6499,
     "sizes": [
       "S",
       "M",
@@ -105,7 +105,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Briefs",
     "range": "Essential",
-    "price": 399,
+    "price": 3299,
     "sizes": [
       "XS",
       "S",
@@ -121,7 +121,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Camisoles",
     "range": "Everyday",
-    "price": 549,
+    "price": 4299,
     "sizes": [
       "S",
       "M",
@@ -136,7 +136,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Boyshorts",
     "range": "Everyday",
-    "price": 499,
+    "price": 3799,
     "sizes": [
       "XS",
       "S",
@@ -152,7 +152,7 @@ export const products: Product[] = [
     "audience": "Women",
     "type": "Lounge sets",
     "range": "Premium",
-    "price": 1299,
+    "price": 8999,
     "sizes": [
       "S",
       "M",
@@ -167,7 +167,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Trunks",
     "range": "Everyday",
-    "price": 299,
+    "price": 3499,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -183,7 +183,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Briefs",
     "range": "Essential",
-    "price": 249,
+    "price": 3099,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -198,7 +198,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Vests",
     "range": "Essential",
-    "price": 279,
+    "price": 3299,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -214,7 +214,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "T-shirts",
     "range": "Everyday",
-    "price": 399,
+    "price": 3999,
     "sizes": [
       "4-5Y",
       "6-7Y",
@@ -229,7 +229,7 @@ export const products: Product[] = [
     "audience": "Boy",
     "type": "Sets",
     "range": "Premium",
-    "price": 699,
+    "price": 5499,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -244,7 +244,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Briefs",
     "range": "Essential",
-    "price": 249,
+    "price": 3099,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -260,7 +260,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Camisoles",
     "range": "Everyday",
-    "price": 329,
+    "price": 3799,
     "sizes": [
       "4-5Y",
       "6-7Y",
@@ -275,7 +275,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Shorties",
     "range": "Everyday",
-    "price": 299,
+    "price": 3499,
     "sizes": [
       "2-3Y",
       "4-5Y",
@@ -290,7 +290,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "T-shirts",
     "range": "Premium",
-    "price": 449,
+    "price": 4499,
     "sizes": [
       "4-5Y",
       "6-7Y",
@@ -305,7 +305,7 @@ export const products: Product[] = [
     "audience": "Girl",
     "type": "Sets",
     "range": "Premium",
-    "price": 749,
+    "price": 5999,
     "sizes": [
       "2-3Y",
       "4-5Y",
