@@ -12,14 +12,27 @@ const rangeNames = ["All", "Essential", "Everyday", "Premium", "Luxury"];
 const cartKeyFor = (mode: CatalogMode) => `nivora-cart-v1-${mode}`;
 
 function ProductArtwork({ product }: { product: CatalogProduct }) {
-  if (product.image_url) return <div className="product-art product-real-photo"><img src={product.image_url} alt={product.name} loading="lazy" /></div>;
-  const index = previewProducts.findIndex(item => item.id === product.id);
-  if (index >= 0) {
-    const col = index % 5;
-    const row = Math.floor(index / 5);
-    return <div className="product-art product-sprite-photo" role="img" aria-label={product.name} style={{ backgroundImage: "url('/products/catalog-real.webp')", backgroundPosition: `${col * 25}% ${row * (100 / 3)}%` }} />;
-  }
-  return <div className="product-art product-sprite-photo" role="img" aria-label={product.name} />;
+  const tone = ({ Stone: "#77736e", Midnight: "#202a3b", Black: "#222222", Ivory: "#eee7d8", Graphite: "#414348", Sand: "#c7aa8d", Rose: "#c98f91", Mocha: "#80675d", Teal: "#245c60", Navy: "#283b58", White: "#e9e5dc", Blue: "#718da8", Slate: "#66717e", Blush: "#e5b2ad", Lilac: "#c7b4d7", Lavender: "#aa96c5", Mint: "#d3dfcb", Peach: "#e7ad9d" } as Record<string, string>)[product.tone] ?? "#b8a99b";
+  const type = product.type.toLowerCase();
+  const isBra = type.includes("bra");
+  const isBrief = type.includes("brief") || type.includes("panty") || type.includes("boyshort");
+  const isBottom = type.includes("boxer") || type.includes("trunk") || type.includes("short");
+  const isTank = type.includes("vest") || type.includes("cami");
+  const isSet = type.includes("set");
+  const isTee = type.includes("tee") || type.includes("t-shirt") || type.includes("shirt") || isSet;
+  return <div className="product-art product-illustration" role="img" aria-label={product.name}>
+    {product.image_url && <img src={product.image_url} alt={product.name} loading="lazy" onError={event => { event.currentTarget.style.display = "none"; }} />}
+    <svg viewBox="0 0 320 260" aria-hidden="true" focusable="false">
+      <ellipse cx="160" cy="224" rx="92" ry="12" fill="#b8a99b" opacity=".16" />
+      {isBra ? <g fill={tone} stroke="#5c5149" strokeOpacity=".22" strokeWidth="2"><path d="M67 143 Q70 85 118 96 Q148 102 158 151 Q169 102 202 96 Q250 85 253 143 L232 178 Q208 193 177 169 L160 158 L143 169 Q112 193 88 178Z"/><path d="M111 99 Q105 54 121 43 M209 99 Q215 54 199 43" fill="none" stroke={tone} strokeWidth="10" strokeLinecap="round"/><path d="M67 143 Q160 168 253 143" fill="none" stroke="#fff" strokeOpacity=".25" strokeWidth="3"/></g>
+      : isBrief ? <g fill={tone} stroke="#5c5149" strokeOpacity=".22" strokeWidth="2"><path d="M77 92 Q160 105 243 92 L226 179 Q212 204 183 183 L160 159 L137 183 Q108 204 94 179Z"/><path d="M77 92 Q160 110 243 92" fill="none" stroke="#fff" strokeOpacity=".32" strokeWidth="5"/></g>
+      : isBottom ? <g fill={tone} stroke="#5c5149" strokeOpacity=".22" strokeWidth="2"><path d="M76 83 Q160 98 244 83 L230 188 Q215 203 176 194 L160 129 L144 194 Q105 203 90 188Z"/><path d="M76 83 Q160 100 244 83" fill="none" stroke="#fff" strokeOpacity=".3" strokeWidth="5"/><path d="M160 127 L160 190" fill="none" stroke="#5c5149" strokeOpacity=".22" strokeWidth="2"/></g>
+      : isTank ? <g fill={tone} stroke="#5c5149" strokeOpacity=".2" strokeWidth="2"><path d="M112 45 L135 45 L144 76 L176 76 L185 45 L208 45 L236 93 L218 110 L211 205 L109 205 L102 110 L84 93Z"/><path d="M135 45 Q160 95 185 45" fill="none" stroke="#fff" strokeOpacity=".28" strokeWidth="4"/></g>
+      : isTee ? <g fill={tone} stroke="#5c5149" strokeOpacity=".2" strokeWidth="2"><path d="M112 48 L139 37 Q160 56 181 37 L208 48 L253 87 L228 119 L208 105 L211 207 L109 207 L112 105 L92 119 L67 87Z"/><path d="M139 38 Q160 75 181 38" fill="none" stroke="#fff" strokeOpacity=".3" strokeWidth="4"/></g>
+      : <g fill={tone} stroke="#5c5149" strokeOpacity=".2" strokeWidth="2"><path d="M96 57 L224 57 L238 195 L82 195Z"/><path d="M96 57 Q160 72 224 57" fill="none" stroke="#fff" strokeOpacity=".3" strokeWidth="4"/></g>}
+      <path d="M125 75 Q160 86 195 75" fill="none" stroke="#fff" strokeOpacity=".13" strokeWidth="2"/>
+    </svg>
+  </div>;
 }
 
 export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
