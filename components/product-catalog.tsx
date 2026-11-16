@@ -17,7 +17,16 @@ function ProductArtwork({ product }: { product: Product }) {
   const row = imageIndex >= 0 ? Math.floor(imageIndex / 5) : 0;
   const artwork = product.audience === "Men" ? "/products/men.svg" : product.audience === "Women" ? "/products/women.svg" : product.audience === "Boy" ? "/products/boy.svg" : "/products/girl.svg";
   return imageIndex >= 0
-    ? <div className="product-art product-photo" role="img" aria-label={`${product.name} sample product photograph`} style={{ backgroundImage: "url('/products/catalog-grid.webp')", backgroundPosition: `${col * 25}% ${row * (100 / 3)}%` }} />
+    ? <div
+        className="product-art product-photo"
+        role="img"
+        aria-label={`${product.name} sample product photograph`}
+        style={{
+          backgroundImage: `url('/products/catalog-grid.webp'), url('${artwork}')`,
+          backgroundPosition: `${col * 25}% ${row * (100 / 3)}%, center`,
+          backgroundSize: "500% 400%, cover",
+        }}
+      />
     : <div className="product-art"><img src={artwork} alt={`${product.audience} ${product.type} collection artwork`} /></div>;
 }
 
@@ -166,7 +175,7 @@ export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
                 <strong>₹{(displayPrice(product) * item.quantity).toLocaleString("en-IN")}</strong>
               </div>;
             })}</div>
-            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href={mode === "wholesale" ? "/checkout?type=wholesale" : "/checkout?type=retail"}>CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
+            <div className="cart-summary"><div><span>Subtotal</span><strong>₹{cartTotal.toLocaleString("en-IN")}</strong></div><p>Shipping and final availability will be confirmed when your order is placed.</p><a className="add-to-bag checkout-cart-link" href={mode === "wholesale" ? "/checkout?type=wholesale" : "/checkout?type=retail"}>CONTINUE TO ORDER</a><button className="continue-shopping" onClick={() => setCart([])}>Clear entire bag</button><button className="continue-shopping" onClick={() => setCartOpen(false)}>Continue shopping</button></div>
           </> : <div className="cart-empty"><p>Your bag is waiting for something comfortable.</p><button className="add-to-bag" onClick={() => setCartOpen(false)}>EXPLORE THE COLLECTION</button></div>}
         </aside>
       </div>}
