@@ -1,0 +1,3 @@
+import { ProductCatalog } from "@/components/product-catalog";
+export const metadata = { title: "Wholesale — NIVORA ESSENTIALS", description: "NIVORA wholesale catalogue and bulk order enquiries." };
+export default function WholesalePage() { return <main><section className="route-hero"><div className="eyebrow">RETAILERS · DISTRIBUTORS · BULK BUYERS</div><h1>Better basics.<br/><em>Better together.</em></h1><p>Explore the NIVORA range for your business. Add products to a bulk request and our team will confirm trade pricing, minimum quantities and availability.</p><div className="wholesale-terms">Trade pricing is confirmed individually · Minimum order: 10 units</div></section><ProductCatalog mode="wholesale"/></main>; }
