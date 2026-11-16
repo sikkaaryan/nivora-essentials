@@ -2,12 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-type StoreProduct = { id: string; name: string; price: number; wholesale_price?: number | null; sizes: string[] };
+type StoreProduct = { id: string; name: string; price: number; wholesale_price?: number | null; min_quantity?: number | null; sizes: string[] };
 
 type CartItem = { productId: string; size: string; quantity: number };
 type OrderType = "retail" | "wholesale";
 const CART_KEY = "nivora-cart-v1";
-const WHOLESALE_MINIMUM_UNITS = 10;
 
 export function CheckoutForm() {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -34,9 +33,9 @@ export function CheckoutForm() {
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = useMemo(() => cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
-    return sum + (product ? (orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) : 0) * item.quantity;
+    return sum + (product ? (orderType === "wholesale" && product.wholesale_price || Math.round(product.price * 0.7)) : 0) * item.quantity;
   }, 0), [cart, products, orderType]);
-  const invalidWholesale = orderType === "wholesale" && itemCount < WHOLESALE_MINIMUM_UNITS;
+  const invalidWholesale = orderType === "wholesale" && cart.some(item => item.quantity < Number(products.find(p => p.id === item.productId)?.min_quantity || 25));
 
   function updateField(key: keyof typeof form, value: string) {
     setForm(current => ({ ...current, [key]: value }));
@@ -46,7 +45,7 @@ export function CheckoutForm() {
     event.preventDefault();
     setError("");
     if (!cart.length) { setError("Your shopping bag is empty."); return; }
-    if (invalidWholesale) { setError(`Wholesale orders currently require at least ${WHOLESALE_MINIMUM_UNITS} units.`); return; }
+    if (invalidWholesale) { setError("Each wholesale item must meet its own minimum quantity shown in your order summary."); return; }
     setLoading(true);
     try {
       const response = await fetch("/api/orders", {
@@ -84,9 +83,9 @@ export function CheckoutForm() {
           <div className="checkout-section-title"><span>01</span><h2>Order type</h2></div>
           <div className="order-type-options">
             <button type="button" className={orderType === "retail" ? "chosen" : ""} onClick={() => setOrderType("retail")}><strong>Personal order</strong><span>Shop for yourself or family</span></button>
-            <button type="button" className={orderType === "wholesale" ? "chosen" : ""} onClick={() => setOrderType("wholesale")}><strong>Wholesale enquiry</strong><span>For retailers and bulk buyers</span></button>
+            <button type="button" className={orderType === "wholesale" ? "chosen" : ""} onClick={() => setOrderType("wholesale")}><strong>Wholesale order</strong><span>Bulk buying with per-product minimum quantities</span></button>
           </div>
-          {orderType === "wholesale" && <p className="checkout-hint">Wholesale minimum: {WHOLESALE_MINIMUM_UNITS} units. Wholesale pricing and final availability will be confirmed by our team before payment.</p>}
+          {orderType === "wholesale" && <p className="checkout-hint">Each product has its own minimum quantity. Wholesale prices are 30% below the listed retail price; final availability is confirmed before payment.</p>}
         </section>
 
         <section className="checkout-panel">
@@ -122,7 +121,7 @@ export function CheckoutForm() {
         {cart.length ? cart.map(item => {
           const product = products.find(p => p.id === item.productId);
           if (!product) return null;
-          return <div className="checkout-line" key={item.productId + item.size}><div><strong>{product.name}</strong><span>Size {item.size} · Qty {item.quantity}</span></div><b>₹{((orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) * item.quantity).toLocaleString("en-IN")}</b></div>;
+          return <div className="checkout-line" key={item.productId + item.size}><div><strong>{product.name}</strong><span>Size {item.size} · Qty {item.quantity}{orderType === "wholesale" ? ` · Min ${Number(product.min_quantity || 25)}` : ""}</span></div><b>₹{((orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) * item.quantity).toLocaleString("en-IN")}</b></div>;
         }) : <p className="checkout-hint">Your bag is empty. <Link href="/#shop">Explore the collection.</Link></p>}
         <div className="checkout-total"><span>Estimated subtotal</span><strong>₹{subtotal.toLocaleString("en-IN")}</strong></div>
         <p className="checkout-hint">Shipping, taxes (if applicable), wholesale rates and final stock availability are confirmed by our team. This is not a payment request.</p>
