@@ -11,7 +11,7 @@ Premium everyday essentials for men, women, boys, and girls.
 - Product imagery: generated sample clothing photography mapped to all 20 preview products; replace with approved supplier/product photography before launch.
 - Homepage footer: discreet “For owner” link to the private `/admin` workspace.
 - Audience: men, women, boys, and girls.
-- Retail and wholesale share a catalogue; wholesale currently has a provisional minimum of 10 units. Confirm the final MOQ and wholesale price list before launch.
+- Retail and wholesale share a catalogue; wholesale has a configurable minimum quantity per product (default 25 units); the default wholesale price is 30% below retail and can be adjusted per item in admin.
 
 ## Stack
 - Next.js 15 + React 19 + TypeScript
@@ -58,7 +58,7 @@ If Supabase is not configured, checkout intentionally returns a setup error and 
 
 ## Before accepting real orders
 - Replace provisional artwork, product descriptions and sample prices with approved catalogue data.
-- Confirm wholesale MOQ and actual wholesale price list; the current 10-unit threshold is a placeholder.
+- Review each product’s minimum wholesale quantity and 30%-below-retail trade pricing in the admin workspace.
 - Connect live inventory / variant availability and add admin order management.
 - Add customer order emails, shipping/tax rules, legal pages and privacy/retention controls.
 - Test checkout on mobile and desktop, then complete a production build.
