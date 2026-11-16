@@ -32,9 +32,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             NI<span className="wordmark-v">V</span>ORA<span className="header-essentials">ESSENTIALS</span>
           </a>
           <nav className="desktop-nav" aria-label="Main navigation">
-            <a href="#collections">Collections</a>
-            <a href="#our-standard">Our standard</a>
-            <a href="#wholesale">Wholesale</a>
+            <a href="/retail">Retail</a>
+            <a href="/wholesale">Wholesale</a>
+            <a href="/#our-standard">Our standard</a>
           </nav>
           <div className="header-actions">
             <ThemeToggle />
@@ -46,6 +46,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <a className="footer-wordmark" href="/">NIVORA</a>
           <span>COMFORT FOR EVERY BODY.</span>
           <span>© {new Date().getFullYear()} NIVORA ESSENTIALS</span>
+          <a className="owner-footer-link" href="/admin">FOR OWNER ↗</a>
         </footer>
       </body>
     </html>
