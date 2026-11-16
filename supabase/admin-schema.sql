@@ -6,7 +6,7 @@ create table if not exists public.products (
   audience text not null check (audience in ('Men', 'Women', 'Boy', 'Girl')),
   type text not null,
   range text not null check (range in ('Essential', 'Everyday', 'Premium', 'Luxury')),
-  price integer not null check (price > 0),
+  price integer not null check (price > 0),\n  wholesale_price integer check (wholesale_price > 0 and wholesale_price <= price),
   sizes text[] not null default '{}',
   tone text not null default 'Classic',
   image_url text,
