@@ -288,3 +288,8 @@ button { font: inherit; }
 body:has(.checkout-page) .site-header,body:has(.checkout-page) .site-footer,
 body:has(.admin-login-shell) .site-header,body:has(.admin-login-shell) .site-footer,
 body:has(.admin-shell) .site-header,body:has(.admin-shell) .site-footer{display:none}
+
+/* Distinct sample product photography: 5 columns × 4 rows in one optimized image. */
+.product-photo{background-repeat:no-repeat;background-size:500% 400%;background-color:#eee8de;min-height:240px}
+.owner-footer-link{font-size:9px;letter-spacing:.18em;opacity:.62;transition:opacity .2s ease}
+.owner-footer-link:hover{opacity:1}
