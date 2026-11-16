@@ -1,3 +1,5 @@
+import { ProductCatalog } from "@/components/product-catalog";
+
 const collections = [
   { name: "For Him", note: "MEN'S EVERYDAY ESSENTIALS", mark: "01" },
   { name: "For Her", note: "WOMEN'S EVERYDAY ESSENTIALS", mark: "02" },
@@ -35,6 +37,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <ProductCatalog />
 
       <section className="standard-band" id="our-standard">
         <div><div className="eyebrow">THE NIVORA STANDARD</div><h2>Comfort is<br />the starting point.</h2></div>
