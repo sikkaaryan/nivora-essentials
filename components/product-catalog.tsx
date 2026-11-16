@@ -12,8 +12,13 @@ const rangeNames = ["All", "Essential", "Everyday", "Premium", "Luxury"];
 const CART_KEY = "nivora-cart-v1";
 
 function ProductArtwork({ product }: { product: Product }) {
+  const imageIndex = previewProducts.findIndex(item => item.id === product.id);
+  const col = imageIndex >= 0 ? imageIndex % 5 : 0;
+  const row = imageIndex >= 0 ? Math.floor(imageIndex / 5) : 0;
   const artwork = product.audience === "Men" ? "/products/men.svg" : product.audience === "Women" ? "/products/women.svg" : product.audience === "Boy" ? "/products/boy.svg" : "/products/girl.svg";
-  return <div className="product-art"><img src={artwork} alt={`${product.audience} ${product.type} collection artwork`} /></div>;
+  return imageIndex >= 0
+    ? <div className="product-art product-photo" role="img" aria-label={`${product.name} sample product photograph`} style={{ backgroundImage: "url('/products/catalog-grid.webp')", backgroundPosition: `${col * 25}% ${row * (100 / 3)}%` }} />
+    : <div className="product-art"><img src={artwork} alt={`${product.audience} ${product.type} collection artwork`} /></div>;
 }
 
 export function ProductCatalog({ mode = "retail" }: { mode?: CatalogMode }) {
