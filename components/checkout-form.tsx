@@ -35,7 +35,7 @@ export function CheckoutForm() {
   const subtotal = useMemo(() => cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.productId);
     return sum + (product ? (orderType === "wholesale" && product.wholesale_price ? product.wholesale_price : product.price) : 0) * item.quantity;
-  }, 0), [cart]);
+  }, 0), [cart, products, orderType]);
   const invalidWholesale = orderType === "wholesale" && itemCount < WHOLESALE_MINIMUM_UNITS;
 
   function updateField(key: keyof typeof form, value: string) {
